@@ -38,8 +38,6 @@ public class Member extends BaseEntity {
 
     private String profileImgUrl;
 
-    private int flightCount;
-
 
     public String getProfileImgUrlOrDefault() {
         return Ut.str.hasLength(profileImgUrl) ? profileImgUrl : "https://placehold.co/640x640?text=O_O";

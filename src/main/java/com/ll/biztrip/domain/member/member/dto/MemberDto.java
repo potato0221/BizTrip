@@ -25,9 +25,6 @@ public class MemberDto {
     private String profileImgUrl;
     @NonNull
     private List<String> authorities;
-    @NonNull
-    private int flightCount;
-
 
 
     public MemberDto(Member member) {
@@ -37,6 +34,5 @@ public class MemberDto {
         this.username = member.getUsername();
         this.profileImgUrl = member.getProfileImgUrlOrDefault();
         this.authorities = member.getAuthoritiesAsStringList();
-        this.flightCount = member.getFlightCount();
     }
 }
