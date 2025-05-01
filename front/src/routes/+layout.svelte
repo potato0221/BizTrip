@@ -1,6 +1,8 @@
 <script lang="ts">
 	import '$lib/app.css';
+	import { page } from '$app/stores';
 	import rq from '$lib/rq/rq.svelte';
+	import { untrack } from 'svelte';
 
 	let isMypage = $state(false);
 	let isWeather = $state(false);
@@ -8,6 +10,15 @@
 	let isFlight = $state(false);
 
 	const { children } = $props();
+	rq.effect(async () => {
+		untrack(() => {
+			rq.initAuth();
+		});
+		isMypage = $page.url.pathname.includes('/member') ? true : false;
+		isWeather = $page.url.pathname.includes('/weather') ? true : false;
+		isState = $page.url.pathname.includes('/state') ? true : false;
+		isFlight = $page.url.pathname.includes('/flight') ? true : false;
+	});
 </script>
 
 <header class="navbar top-0 w-full bg-gray-50 shadow justify-between items-center">
