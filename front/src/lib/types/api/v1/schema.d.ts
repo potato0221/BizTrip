@@ -21,22 +21,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/airport/update/location": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["updateLocation"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/members/logout": {
         parameters: {
             query?: never;
@@ -64,22 +48,6 @@ export interface paths {
         put?: never;
         /** 로그인 */
         post: operations["login"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/airport/add": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["getAirports"];
         delete?: never;
         options?: never;
         head?: never;
@@ -145,8 +113,6 @@ export interface components {
             username?: string;
             profileImgUrl?: string;
             authorities?: string[];
-            /** Format: int32 */
-            flightCount?: number;
         };
         RsDataLoginResponseBody: {
             resultCode: string;
@@ -202,26 +168,6 @@ export interface operations {
             };
         };
     };
-    updateLocation: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RsDataEmpty"];
-                };
-            };
-        };
-    };
     logout: {
         parameters: {
             query?: never;
@@ -262,26 +208,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["RsDataLoginResponseBody"];
-                };
-            };
-        };
-    };
-    getAirports: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RsDataEmpty"];
                 };
             };
         };
