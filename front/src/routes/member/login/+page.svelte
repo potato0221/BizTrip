@@ -20,8 +20,8 @@
 
 		if (data) {
 			rq.msgInfo(data.msg);
-			await rq.initAuth();
 			rq.goTo('/');
+			location.reload();
 		}
 	};
 </script>

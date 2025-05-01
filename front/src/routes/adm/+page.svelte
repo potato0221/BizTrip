@@ -8,9 +8,13 @@
 		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/ktx/addCity');
 
 		if (data) {
-			rq.msgInfo('도시가 추가 되었습니다.');
+			if (data.resultCode === '200-0') {
+				rq.msgInfo('도시가 추가 되었습니다.');
+			} else {
+				rq.msgError(data.msg); // ← 실패 코드일 때 메시지 출력
+			}
 		} else if (error) {
-			rq.msgError('api 호출 오류');
+			rq.msgError('API 호출 오류');
 		}
 	};
 

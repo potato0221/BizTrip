@@ -22,7 +22,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                .authorizeHttpRequests(authorizeRequests ->
+                .authorizeRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/gen/**")
                                 .permitAll()

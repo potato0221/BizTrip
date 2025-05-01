@@ -9,7 +9,10 @@ public enum Msg {
     E200_1_INQUIRY_SUCCEED("200-1","조회 성공"),
     E200_2_MODIFY_SUCCEED("200-2","수정 성공"),
     E200_3_DELETE_SUCCEED("200-3","삭제 성공"),
-    E200_6_LOGOUT_SUCCEED("200-6","로그아웃 성공");
+    E200_6_LOGOUT_SUCCEED("200-6","로그아웃 성공"),
+    E403_0_FORBIDDEN("403-0", "관리자 권한이 필요합니다");
+
+
 
 
     private final String code;
