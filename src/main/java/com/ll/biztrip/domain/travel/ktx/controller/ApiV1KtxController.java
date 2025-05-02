@@ -22,7 +22,7 @@ public class ApiV1KtxController {
 
     @PostMapping("/addCity")
     @Operation(summary = "도시 등록")
-    public RsData<Empty> getCities() {
+    public RsData<Empty> addCities() {
 
         if(!rq.isAdmin()){
             System.out.println("권한 부족");
@@ -30,6 +30,20 @@ public class ApiV1KtxController {
         }
 
         ktxService.updateCity();
+
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+    }
+
+    @PostMapping("/addStation")
+    @Operation(summary = "기차역 등록")
+    public RsData<Empty> addStations() {
+
+        if(!rq.isAdmin()){
+            System.out.println("권한 부족");
+            return RsData.of(Msg.E403_0_FORBIDDEN.getCode(),Msg.E403_0_FORBIDDEN.getMsg());
+        }
+
+        ktxService.updateStation();
 
         return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
     }
