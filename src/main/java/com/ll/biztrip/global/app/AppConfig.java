@@ -18,31 +18,16 @@ public class AppConfig {
     public static String jwtSecretKey;
 
     @Getter
-    public static String openApiKeyFlight;
-
-    @Getter
-    public static String openApiKeyWeather;
-    @Getter
-    public static String openApiKeyKtx;
+    public static String openApiKey;
 
     @Value("${custom.jwt.secretKey}")
     public void setJwtSecretKey(String jwtSecretKey) {
         this.jwtSecretKey = jwtSecretKey;
     }
 
-    @Value("${custom.api.key.flight}")
-    public void setOpenApiKeyFlight(String openApiKey) {
-        this.openApiKeyFlight = openApiKey;
-    }
-
-    @Value("${custom.api.key.weather}")
-    public void setOpenApiKeyWeather(String openApiKey) {
-        this.openApiKeyWeather = openApiKey;
-    }
-
-    @Value("${custom.api.key.ktx}")
-    public void setOpenApiKeyKtx(String openApiKey) {
-        this.openApiKeyKtx = openApiKey;
+    @Value("${custom.api.key}")
+    public void setOpenApiKey(String openApiKey) {
+        this.openApiKey = openApiKey;
     }
 
     private static String activeProfile;
