@@ -37,9 +37,7 @@ public class FlightService {
                 // 1. URL 설정
                 StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1613000/DmstcFlightNvgInfoService/getArprtList");
                 // 2. 오픈 API의요청 규격에 맞는 파라미터 생성, 발급받은 인증키.
-                urlBuilder.append("?" + URLEncoder.encode("page", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(i), "UTF-8"));
-                urlBuilder.append("&" + URLEncoder.encode("perPage", "UTF-8") + "=" + URLEncoder.encode("1000", "UTF-8"));
-                urlBuilder.append("&" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + AppConfig.openApiKey);
+                urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + AppConfig.openApiKey);
                 urlBuilder.append("&" + URLEncoder.encode("_type", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8"));
                 // 3. URL 객체 생성.
                 System.out.println("URL 요청 확인: " + urlBuilder.toString());

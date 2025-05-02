@@ -21,7 +21,7 @@ public class ApiV1KtxController {
     private final Rq rq;
 
     @PostMapping("/addCity")
-    @Operation(summary = "도시 등록")
+    @Operation(summary = "Ktx 도시 등록")
     public RsData<Empty> addCities() {
 
         if(!rq.isAdmin()){
@@ -29,7 +29,7 @@ public class ApiV1KtxController {
             return RsData.of(Msg.E403_0_FORBIDDEN.getCode(),Msg.E403_0_FORBIDDEN.getMsg());
         }
 
-        ktxService.updateCity();
+        ktxService.updateKtxCity();
 
         return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
     }

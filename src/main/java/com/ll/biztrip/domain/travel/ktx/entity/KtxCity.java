@@ -14,7 +14,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Setter
 @Getter
 @ToString(callSuper = true)
-public class City extends BaseEntity {
+public class KtxCity extends BaseEntity {
 
     @Column(unique = true, length = 10)
     private String cityCode;

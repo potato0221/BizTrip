@@ -26,5 +26,5 @@ public class Station extends BaseEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "cityName", referencedColumnName = "cityName")
-    private City cityCode;
+    private KtxCity ktxCityCode;
 }
