@@ -20,11 +20,16 @@ public class ApiSecurityConfig {
     SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/api/**")
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/*/admin").hasRole("ADMIN")
-                        .requestMatchers("/api/*/members/login", "/api/*/members/logout").permitAll()
-                        .anyRequest().authenticated()
+                .authorizeRequests(
+                        authorizeRequests -> authorizeRequests
+                                .requestMatchers(HttpMethod.OPTIONS, "/api/**")
+                                .permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/*/admin")
+                                .hasRole("ADMIN")
+                                .requestMatchers("/api/*/members/login", "/api/*/members/logout")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
                 )
                 .csrf(
                         csrf -> csrf

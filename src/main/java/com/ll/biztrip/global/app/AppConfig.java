@@ -13,6 +13,7 @@ import java.io.IOException;
 
 @Configuration
 public class AppConfig {
+
     @Getter
     public static String jwtSecretKey;
 
