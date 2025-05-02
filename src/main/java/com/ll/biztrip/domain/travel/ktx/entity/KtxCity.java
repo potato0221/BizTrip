@@ -3,8 +3,6 @@ package com.ll.biztrip.domain.travel.ktx.entity;
 import com.ll.biztrip.global.jpa.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.*;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -16,15 +14,11 @@ import static lombok.AccessLevel.PROTECTED;
 @Setter
 @Getter
 @ToString(callSuper = true)
-public class Station extends BaseEntity {
+public class KtxCity extends BaseEntity {
+
+    @Column(unique = true, length = 10)
+    private String cityCode;
 
     @Column(unique = true, length = 20)
-    private String stationName;
-
-    @Column(unique = true, length = 20)
-    private String stationId;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "cityName", referencedColumnName = "cityName")
-    private KtxCity ktxCityCode;
+    private String cityName;
 }

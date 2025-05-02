@@ -1,4 +1,4 @@
-package com.ll.biztrip.domain.travel.ktx.entity;
+package com.ll.biztrip.domain.travel.flight.entity;
 
 import com.ll.biztrip.global.jpa.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -14,11 +14,12 @@ import static lombok.AccessLevel.PROTECTED;
 @Setter
 @Getter
 @ToString(callSuper = true)
-public class City extends BaseEntity {
-
-    @Column(unique = true, length = 10)
-    private String cityCode;
+public class Airport extends BaseEntity {
 
     @Column(unique = true, length = 20)
-    private String cityName;
+    private String airportId;
+
+    @Column(unique = true, length = 20)
+    private String airportName;
+
 }

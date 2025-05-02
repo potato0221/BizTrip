@@ -32,6 +32,34 @@
 		}
 	};
 
+	const addAirport = async () => {
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/flight/addAirport');
+
+		if (data) {
+			if (data.resultCode === '200-0') {
+				rq.msgInfo('공항이 추가 되었습니다.');
+			} else {
+				rq.msgError(data.msg);
+			}
+		} else if (error) {
+			rq.msgError('API 호출 오류');
+		}
+	};
+
+	const addTerminal = async () => {
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/bus/addTerminal');
+
+		if (data) {
+			if (data.resultCode === '200-0') {
+				rq.msgInfo('터미널널이 추가 되었습니다.');
+			} else {
+				rq.msgError(data.msg);
+			}
+		} else if (error) {
+			rq.msgError('API 호출 오류');
+		}
+	};
+
 	async function load() {
 		const { data } = await rq.apiEndPoints().GET('/api/v1/members/me');
 
@@ -49,18 +77,36 @@
 			<div>
 				<p class="text-xl">관리자 페이지</p>
 			</div>
-			<div class="ml-4">
+		</div>
+		<div class="flex">
+			<div class="mr-2">
 				<button
 					on:click={addCity}
 					class="inline-block rounded-md border border-gray-400 bg-white px-2 py-1 text-sm font-medium font-semibold text-gray-800 shadow-sm hover:bg-gray-700 hover:text-white focus:outline-none"
 					>Ktx 도시 추가</button
 				>
 			</div>
-			<div class="ml-4">
+			<div class="mr-2">
 				<button
 					on:click={addStation}
 					class="inline-block rounded-md border border-gray-400 bg-white px-2 py-1 text-sm font-medium font-semibold text-gray-800 shadow-sm hover:bg-gray-700 hover:text-white focus:outline-none"
 					>기차역 추가</button
+				>
+			</div>
+		</div>
+		<div class="flex mt-2">
+			<div class="mr-2">
+				<button
+					on:click={addTerminal}
+					class="inline-block rounded-md border border-gray-400 bg-white px-2 py-1 text-sm font-medium font-semibold text-gray-800 shadow-sm hover:bg-gray-700 hover:text-white focus:outline-none"
+					>터미널 추가</button
+				>
+			</div>
+			<div class="">
+				<button
+					on:click={addAirport}
+					class="inline-block rounded-md border border-gray-400 bg-white px-2 py-1 text-sm font-medium font-semibold text-gray-800 shadow-sm hover:bg-gray-700 hover:text-white focus:outline-none"
+					>공항 추가</button
 				>
 			</div>
 		</div>

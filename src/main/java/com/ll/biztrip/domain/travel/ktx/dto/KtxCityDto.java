@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CityDto {
+public class KtxCityDto {
     @JsonProperty("citycode")
     private String cityCode;
 

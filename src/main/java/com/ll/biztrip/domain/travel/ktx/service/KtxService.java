@@ -3,11 +3,11 @@ package com.ll.biztrip.domain.travel.ktx.service;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ll.biztrip.domain.travel.ktx.dto.CityDto;
+import com.ll.biztrip.domain.travel.ktx.dto.KtxCityDto;
 import com.ll.biztrip.domain.travel.ktx.dto.StationDto;
-import com.ll.biztrip.domain.travel.ktx.entity.City;
+import com.ll.biztrip.domain.travel.ktx.entity.KtxCity;
 import com.ll.biztrip.domain.travel.ktx.entity.Station;
-import com.ll.biztrip.domain.travel.ktx.repository.CityRepository;
+import com.ll.biztrip.domain.travel.ktx.repository.KtxCityRepository;
 import com.ll.biztrip.domain.travel.ktx.repository.StationRepository;
 import com.ll.biztrip.global.app.AppConfig;
 import lombok.RequiredArgsConstructor;
@@ -27,27 +27,24 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class KtxService {
 
-    private final CityRepository cityRepository;
+    private final KtxCityRepository ktxCityRepository;
     private final StationRepository stationRepository;
 
-    public void updateCity() {
-        if (cityRepository.count() > 0) {
+    public void updateKtxCity() {
+        if (ktxCityRepository.count() > 0) {
             System.out.println("이미 데이터가 존재합니다. 요청을 취소 합니다.");
             return;
         }
 
         try {
-            for (int i = 1; i <= 1; i++) {
+            for (int i = 1; i <= 10; i++) {
                 // 1. URL 설정
                 StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1613000/TrainInfoService/getCtyCodeList");
                 // 2. 오픈 API의요청 규격에 맞는 파라미터 생성, 발급받은 인증키.
-                urlBuilder.append("?" + URLEncoder.encode("page", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(i), "UTF-8"));
-                urlBuilder.append("&" + URLEncoder.encode("perPage", "UTF-8") + "=" + URLEncoder.encode("1000", "UTF-8"));
-                urlBuilder.append("&" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + AppConfig.openApiKeyKtx);
+                urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + AppConfig.openApiKey);
                 urlBuilder.append("&" + URLEncoder.encode("_type", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8"));
-                // 3. URL 객체 생성.
-                System.out.println("URL 요청 확인: " + urlBuilder.toString());
 
+                // 3. URL 객체 생성.
                 URL url = new URL(urlBuilder.toString());
                 // 4. 요청하고자 하는 URL과 통신하기 위한 Connection 객체 생성.
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -95,9 +92,9 @@ public class KtxService {
                 // JSON엔 존재하나 DTO에는 존재하지 않는 매핑 값에 대해 처리
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 // DTO List 생성
-                List<CityDto> cityDtos = Arrays.asList(objectMapper.treeToValue(node2, CityDto[].class));
+                List<KtxCityDto> ktxCityDtos = Arrays.asList(objectMapper.treeToValue(node2, KtxCityDto[].class));
 
-                saveCities(cityDtos);
+                saveCities(ktxCityDtos);
             }
 
         } catch (Exception e) {
@@ -106,20 +103,20 @@ public class KtxService {
     }
 
     @Transactional
-    public void saveCities(List<CityDto> cityDtos) {
+    public void saveCities(List<KtxCityDto> ktxCityDtos) {
 
-        for(CityDto cityDto : cityDtos){
+        for(KtxCityDto ktxCityDto : ktxCityDtos){
 
-            if(cityRepository.existsByCityCode(cityDto.getCityCode())){
+            if(ktxCityRepository.existsByCityCode(ktxCityDto.getCityCode())){
                 continue;
             }
 
-            City city = City.builder()
-                    .cityCode(cityDto.getCityCode())
-                    .cityName(cityDto.getCityName())
+            KtxCity ktxCity = KtxCity.builder()
+                    .cityCode(ktxCityDto.getCityCode())
+                    .cityName(ktxCityDto.getCityName())
                     .build();
 
-            cityRepository.save(city);
+            ktxCityRepository.save(ktxCity);
             System.out.println("저장");
         }
     }
@@ -131,28 +128,26 @@ public class KtxService {
         }
 
         try {
-            if(cityRepository.count()==0){
+            if(ktxCityRepository.count()==0){
                 System.out.println("도시를 먼저 저장 해 주세요");
                 return;
             }
 
-            List<City> cities = cityRepository.findAll();
+            List<KtxCity> cities = ktxCityRepository.findAll();
 
-            for(City city : cities) {
+            for(KtxCity ktxCity : cities) {
 
-                String cityCode = city.getCityCode();
+                String cityCode = ktxCity.getCityCode();
 
-                for (int i = 1; i <= 1; i++) {
+                for (int i = 1; i <= 6; i++) {
+                    System.out.println(i+"page");
                     StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1613000/TrainInfoService/getCtyAcctoTrainSttnList");
-                    urlBuilder.append("?" + URLEncoder.encode("page", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(i), "UTF-8"));
-                    urlBuilder.append("&" + URLEncoder.encode("perPage", "UTF-8") + "=" + URLEncoder.encode("1000", "UTF-8"));
-                    urlBuilder.append("&" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + AppConfig.openApiKeyKtx);
+                    urlBuilder.append("?" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(i), "UTF-8"));
+                    urlBuilder.append("&" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + AppConfig.openApiKey);
                     urlBuilder.append("&" + URLEncoder.encode("_type", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8"));
                     urlBuilder.append("&" + URLEncoder.encode("cityCode", "UTF-8") + "=" + URLEncoder.encode(cityCode, "UTF-8"));
 
                     // 3. URL 객체 생성.
-                    System.out.println("URL 요청 확인: " + urlBuilder.toString());
-
                     URL url = new URL(urlBuilder.toString());
                     // 4. 요청하고자 하는 URL과 통신하기 위한 Connection 객체 생성.
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -194,7 +189,7 @@ public class KtxService {
 
                     if (node2.isMissingNode() || !node2.isArray()) {
                         System.out.println("데이터가 존재하지 않습니다.");
-                        return;
+                        continue;
                     }
 
                     // JSON엔 존재하나 DTO에는 존재하지 않는 매핑 값에 대해 처리
@@ -202,7 +197,7 @@ public class KtxService {
                     // DTO List 생성
                     List<StationDto> stationDtos = Arrays.asList(objectMapper.treeToValue(node2, StationDto[].class));
 
-                    saveStations(stationDtos, city);
+                    saveStations(stationDtos, ktxCity);
                 }
             }
 
@@ -212,7 +207,7 @@ public class KtxService {
     }
 
     @Transactional
-    public void saveStations(List<StationDto> stationDtos, City city) {
+    public void saveStations(List<StationDto> stationDtos, KtxCity ktxCity) {
 
         for(StationDto stationDto : stationDtos){
 
@@ -222,8 +217,8 @@ public class KtxService {
 
             Station station = Station.builder()
                     .stationId(stationDto.getStationId())
-                    .stationName(stationDto.getStationName()+"역")
-                    .cityCode(city)
+                    .stationName(stationDto.getStationName())
+                    .ktxCityCode(ktxCity)
                     .build();
 
             stationRepository.save(station);
