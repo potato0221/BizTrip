@@ -1,14 +1,14 @@
-package com.ll.biztrip.domain.travel.ktx.service;
+package com.ll.biztrip.domain.travel.train.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ll.biztrip.domain.travel.ktx.dto.KtxCityDto;
-import com.ll.biztrip.domain.travel.ktx.dto.StationDto;
-import com.ll.biztrip.domain.travel.ktx.entity.KtxCity;
-import com.ll.biztrip.domain.travel.ktx.entity.Station;
-import com.ll.biztrip.domain.travel.ktx.repository.KtxCityRepository;
-import com.ll.biztrip.domain.travel.ktx.repository.StationRepository;
+import com.ll.biztrip.domain.travel.train.dto.TrainCityDto;
+import com.ll.biztrip.domain.travel.train.dto.StationDto;
+import com.ll.biztrip.domain.travel.train.entity.TrainCity;
+import com.ll.biztrip.domain.travel.train.entity.Station;
+import com.ll.biztrip.domain.travel.train.repository.TrainCityRepository;
+import com.ll.biztrip.domain.travel.train.repository.StationRepository;
 import com.ll.biztrip.global.app.AppConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,13 +25,13 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class KtxService {
+public class TrainService {
 
-    private final KtxCityRepository ktxCityRepository;
+    private final TrainCityRepository trainCityRepository;
     private final StationRepository stationRepository;
 
     public void updateKtxCity() {
-        if (ktxCityRepository.count() > 0) {
+        if (trainCityRepository.count() > 0) {
             System.out.println("이미 데이터가 존재합니다. 요청을 취소 합니다.");
             return;
         }
@@ -92,9 +92,9 @@ public class KtxService {
                 // JSON엔 존재하나 DTO에는 존재하지 않는 매핑 값에 대해 처리
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 // DTO List 생성
-                List<KtxCityDto> ktxCityDtos = Arrays.asList(objectMapper.treeToValue(node2, KtxCityDto[].class));
+                List<TrainCityDto> trainCityDtos = Arrays.asList(objectMapper.treeToValue(node2, TrainCityDto[].class));
 
-                saveCities(ktxCityDtos);
+                saveCities(trainCityDtos);
             }
 
         } catch (Exception e) {
@@ -103,20 +103,20 @@ public class KtxService {
     }
 
     @Transactional
-    public void saveCities(List<KtxCityDto> ktxCityDtos) {
+    public void saveCities(List<TrainCityDto> trainCityDtos) {
 
-        for(KtxCityDto ktxCityDto : ktxCityDtos){
+        for(TrainCityDto trainCityDto : trainCityDtos){
 
-            if(ktxCityRepository.existsByCityCode(ktxCityDto.getCityCode())){
+            if(trainCityRepository.existsByCityCode(trainCityDto.getCityCode())){
                 continue;
             }
 
-            KtxCity ktxCity = KtxCity.builder()
-                    .cityCode(ktxCityDto.getCityCode())
-                    .cityName(ktxCityDto.getCityName())
+            TrainCity trainCity = TrainCity.builder()
+                    .cityCode(trainCityDto.getCityCode())
+                    .cityName(trainCityDto.getCityName())
                     .build();
 
-            ktxCityRepository.save(ktxCity);
+            trainCityRepository.save(trainCity);
             System.out.println("저장");
         }
     }
@@ -128,16 +128,16 @@ public class KtxService {
         }
 
         try {
-            if(ktxCityRepository.count()==0){
+            if(trainCityRepository.count()==0){
                 System.out.println("도시를 먼저 저장 해 주세요");
                 return;
             }
 
-            List<KtxCity> cities = ktxCityRepository.findAll();
+            List<TrainCity> cities = trainCityRepository.findAll();
 
-            for(KtxCity ktxCity : cities) {
+            for(TrainCity trainCity : cities) {
 
-                String cityCode = ktxCity.getCityCode();
+                String cityCode = trainCity.getCityCode();
 
                 for (int i = 1; i <= 6; i++) {
                     System.out.println(i+"page");
@@ -197,7 +197,7 @@ public class KtxService {
                     // DTO List 생성
                     List<StationDto> stationDtos = Arrays.asList(objectMapper.treeToValue(node2, StationDto[].class));
 
-                    saveStations(stationDtos, ktxCity);
+                    saveStations(stationDtos, trainCity);
                 }
             }
 
@@ -207,7 +207,7 @@ public class KtxService {
     }
 
     @Transactional
-    public void saveStations(List<StationDto> stationDtos, KtxCity ktxCity) {
+    public void saveStations(List<StationDto> stationDtos, TrainCity trainCity) {
 
         for(StationDto stationDto : stationDtos){
 
@@ -218,7 +218,7 @@ public class KtxService {
             Station station = Station.builder()
                     .stationId(stationDto.getStationId())
                     .stationName(stationDto.getStationName())
-                    .ktxCityCode(ktxCity)
+                    .trainCityCode(trainCity)
                     .build();
 
             stationRepository.save(station);

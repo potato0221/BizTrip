@@ -1,7 +1,7 @@
-package com.ll.biztrip.domain.travel.ktx.controller;
+package com.ll.biztrip.domain.travel.train.controller;
 
 
-import com.ll.biztrip.domain.travel.ktx.service.KtxService;
+import com.ll.biztrip.domain.travel.train.service.TrainService;
 import com.ll.biztrip.global.msg.Msg;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/travel/ktx")
 @RequiredArgsConstructor
-public class ApiV1KtxController {
+public class ApiV1TrainController {
 
-    private final KtxService ktxService;
+    private final TrainService trainService;
     private final Rq rq;
 
     @PostMapping("/addCity")
@@ -29,7 +29,7 @@ public class ApiV1KtxController {
             return RsData.of(Msg.E403_0_FORBIDDEN.getCode(),Msg.E403_0_FORBIDDEN.getMsg());
         }
 
-        ktxService.updateKtxCity();
+        trainService.updateKtxCity();
 
         return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
     }
@@ -43,7 +43,7 @@ public class ApiV1KtxController {
             return RsData.of(Msg.E403_0_FORBIDDEN.getCode(),Msg.E403_0_FORBIDDEN.getMsg());
         }
 
-        ktxService.updateStation();
+        trainService.updateStation();
 
         return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
     }
