@@ -1,13 +1,13 @@
 <script>
 	import BusTab from './tabs/BusTab.svelte';
-	import KtxTab from './tabs/KtxTab.svelte';
+	import TrainTab from './tabs/TrainTab.svelte';
 	import FlightTab from './tabs/FlightTab.svelte';
 
 	let selectedTab = 'bus';
 </script>
 
 <div class="flex space-x-4 mb-4">
-	{#each ['bus', 'ktx', 'flight'] as tab}
+	{#each ['bus', 'train', 'flight'] as tab}
 		<button
 			on:click={() => (selectedTab = tab)}
 			class="text-lg font-semibold border-b-2 pb-1 transition-all"
@@ -16,7 +16,7 @@
 			class:text-gray-500={selectedTab !== tab}
 			class:border-transparent={selectedTab !== tab}
 		>
-			{tab === 'bus' ? '고속버스' : tab === 'ktx' ? 'KTX' : '항공편'}
+			{tab === 'bus' ? '버스' : tab === 'train' ? '기차' : '항공편'}
 		</button>
 	{/each}
 </div>
@@ -24,8 +24,8 @@
 <div class="mx-auto w-full max-w-lg px-4">
 	{#if selectedTab === 'bus'}
 		<BusTab />
-	{:else if selectedTab === 'ktx'}
-		<KtxTab />
+	{:else if selectedTab === 'train'}
+		<TrainTab />
 	{:else if selectedTab === 'flight'}
 		<FlightTab />
 	{/if}

@@ -1,4 +1,4 @@
-package com.ll.biztrip.domain.travel.ktx.entity;
+package com.ll.biztrip.domain.travel.train.entity;
 
 import com.ll.biztrip.global.jpa.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -26,5 +26,5 @@ public class Station extends BaseEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "cityName", referencedColumnName = "cityName")
-    private KtxCity ktxCityCode;
+    private TrainCity trainCity;
 }

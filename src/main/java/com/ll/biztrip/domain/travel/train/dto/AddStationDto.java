@@ -1,4 +1,4 @@
-package com.ll.biztrip.domain.travel.ktx.dto;
+package com.ll.biztrip.domain.travel.train.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StationDto {
+public class AddStationDto {
     @JsonProperty("nodeid")
     private String stationId;
 
