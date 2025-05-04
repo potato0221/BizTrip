@@ -6,8 +6,8 @@
 
 	let isMypage = $state(false);
 	let isWeather = $state(false);
-	let isState = $state(false);
-	let isFlight = $state(false);
+	let isAddTravel = $state(false);
+	let isMyTravel = $state(false);
 
 	const { children } = $props();
 	rq.effect(async () => {
@@ -16,8 +16,8 @@
 		});
 		isMypage = $page.url.pathname.includes('/member') ? true : false;
 		isWeather = $page.url.pathname.includes('/weather') ? true : false;
-		isState = $page.url.pathname.includes('/state') ? true : false;
-		isFlight = $page.url.pathname.includes('/flight') ? true : false;
+		isAddTravel = $page.url.pathname.includes('/addTravel') ? true : false;
+		isMyTravel = $page.url.pathname.includes('/myTravel') ? true : false;
 	});
 </script>
 
@@ -104,52 +104,26 @@
 	<div class="container mx-auto flex items-center justify-around">
 		<div class="flex flex-1 flex-col items-center">
 			{#if rq.isLogin()}
-				<a href="/state">
+				<a href="/addTravel">
 					<div class="flex items-center justify-center">
 						<div
-							class={isState
+							class={isAddTravel
 								? 'flex h-9 w-9 items-center justify-center text-xl text-blue-600'
 								: 'flex h-9 w-9 items-center justify-center text-xl text-gray-300'}
 						>
-							<i class="fa-solid fa-plane-departure text-2xl"></i>
+							<i class="fa-regular fa-map text-2xl"></i>
 						</div>
 					</div>
-					<p class={isState ? 'text-blue-600' : 'text-gray-300'}>KTX</p>
+					<p class={isAddTravel ? 'text-blue-600' : 'text-gray-300'}>여행 등록</p>
 				</a>
 			{:else}
 				<a href="/member/login">
 					<div class="flex items-center justify-center">
 						<div class="flex h-9 w-9 items-center justify-center text-xl">
-							<i class="fa-solid fa-plane-departure text-2xl"></i>
+							<i class="fa-regular fa-map text-2xl"></i>
 						</div>
 					</div>
-					<p>KTX</p>
-				</a>
-			{/if}
-		</div>
-
-		<div class="flex flex-1 flex-col items-center">
-			{#if rq.isLogin()}
-				<a href="/flight">
-					<div class="flex items-center justify-center">
-						<div
-							class={isFlight
-								? 'flex h-9 w-9 items-center justify-center text-xl text-blue-600'
-								: 'flex h-9 w-9 items-center justify-center text-xl text-gray-300'}
-						>
-							<i class="fa-solid fa-ticket text-3xl"></i>
-						</div>
-					</div>
-					<p class={isFlight ? 'text-blue-600' : 'text-gray-300'}>항공편</p>
-				</a>
-			{:else}
-				<a href="/member/login">
-					<div class="flex items-center justify-center">
-						<div class="flex h-9 w-9 items-center justify-center text-xl">
-							<i class="fa-solid fa-ticket text-3xl"></i>
-						</div>
-					</div>
-					<p>항공편</p>
+					<p>여행 등록</p>
 				</a>
 			{/if}
 		</div>
@@ -162,7 +136,7 @@
 								? 'flex h-9 w-9 items-center justify-center text-xl text-blue-600'
 								: 'flex h-9 w-9 items-center justify-center text-xl text-gray-300'}
 						>
-							<i class="fa-solid fa-sun text-3xl"></i>
+							<i class="fa-solid fa-sun text-2xl"></i>
 						</div>
 					</div>
 					<p class={isWeather ? 'text-blue-600' : 'text-gray-300'}>도착지 날씨</p>
@@ -171,13 +145,39 @@
 				<a href="/member/login">
 					<div class="flex items-center justify-center">
 						<div class="flex h-9 w-9 items-center justify-center text-xl">
-							<i class="fa-regular fa-circle-user text-3xl"></i>
+							<i class="fa-regular fa-circle-user text-2xl"></i>
 						</div>
 					</div>
 					<p>도착지 날씨</p>
 				</a>
 			{/if}
 		</div>
+		<div class="flex flex-1 flex-col items-center">
+			{#if rq.isLogin()}
+				<a href="/myTravel">
+					<div class="flex items-center justify-center">
+						<div
+							class={isMyTravel
+								? 'flex h-9 w-9 items-center justify-center text-xl text-blue-600'
+								: 'flex h-9 w-9 items-center justify-center text-xl text-gray-300'}
+						>
+							<i class="fa-solid fa-route text-2xl"></i>
+						</div>
+					</div>
+					<p class={isMyTravel ? 'text-blue-600' : 'text-gray-300'}>여행 관리</p>
+				</a>
+			{:else}
+				<a href="/member/login">
+					<div class="flex items-center justify-center">
+						<div class="flex h-9 w-9 items-center justify-center text-xl">
+							<i class="fa-solid fa-route text-2xl"></i>
+						</div>
+					</div>
+					<p>여행 관리</p>
+				</a>
+			{/if}
+		</div>
+
 		{#if rq.isAdmin()}
 			<div class="flex flex-1 flex-col items-center">
 				<a href="/adm">

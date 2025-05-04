@@ -10,7 +10,9 @@ public enum Msg {
     E200_2_MODIFY_SUCCEED("200-2","수정 성공"),
     E200_3_DELETE_SUCCEED("200-3","삭제 성공"),
     E200_6_LOGOUT_SUCCEED("200-6","로그아웃 성공"),
-    E403_0_FORBIDDEN("403-0", "관리자 권한이 필요합니다");
+    E401_0_UNAUTHORIZED("401-0", "로그인 후 이용 해 주세요"),
+    E403_0_FORBIDDEN("403-0", "관리자 권한이 필요합니다"),
+    E400_1_ALREADY_REGISTERED_BUS("400-1", "이미 등록된 버스입니다");
 
 
 

@@ -3,11 +3,20 @@ package com.ll.biztrip.domain.travel.bus.service;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ll.biztrip.domain.member.member.entity.Member;
+import com.ll.biztrip.domain.travel.bus.dto.AddTerminalDto;
+import com.ll.biztrip.domain.travel.bus.dto.BusRegisterDto;
+import com.ll.biztrip.domain.travel.bus.dto.BusScheduleDto;
 import com.ll.biztrip.domain.travel.bus.dto.TerminalDto;
+import com.ll.biztrip.domain.travel.bus.entity.Bus;
 import com.ll.biztrip.domain.travel.bus.entity.Terminal;
+import com.ll.biztrip.domain.travel.bus.repository.BusRepository;
 import com.ll.biztrip.domain.travel.bus.repository.TerminalRepository;
 import com.ll.biztrip.global.app.AppConfig;
+import com.ll.biztrip.global.exceptions.GlobalException;
+import com.ll.biztrip.global.msg.Msg;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +25,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +38,7 @@ import java.util.List;
 public class BusService {
 
     private final TerminalRepository terminalRepository;
+    private final BusRepository busRepository;
 
     public void updateTerminal() {
         if (terminalRepository.count() > 0) {
@@ -91,9 +105,9 @@ public class BusService {
                 // JSON엔 존재하나 DTO에는 존재하지 않는 매핑 값에 대해 처리
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 // DTO List 생성
-                List<TerminalDto> terminalDtos = Arrays.asList(objectMapper.treeToValue(node2, TerminalDto[].class));
+                List<AddTerminalDto> addTerminalDtos = Arrays.asList(objectMapper.treeToValue(node2, AddTerminalDto[].class));
 
-                saveTerminals(terminalDtos);
+                saveTerminals(addTerminalDtos);
             }
 
         } catch (Exception e) {
@@ -102,21 +116,102 @@ public class BusService {
     }
 
     @Transactional
-    public void saveTerminals(List<TerminalDto> terminalDtos) {
+    public void saveTerminals(List<AddTerminalDto> addTerminalDtos) {
 
-        for(TerminalDto terminalDto : terminalDtos){
+        for(AddTerminalDto addTerminalDto : addTerminalDtos){
 
-            if(terminalRepository.existsByTerminalId(terminalDto.getTerminalId())){
+            if(terminalRepository.existsByTerminalId(addTerminalDto.getTerminalId())){
                 continue;
             }
 
             Terminal terminal = Terminal.builder()
-                    .terminalId(terminalDto.getTerminalId())
-                    .terminalName(terminalDto.getTerminalName())
+                    .terminalId(addTerminalDto.getTerminalId())
+                    .terminalName(addTerminalDto.getTerminalName())
                     .build();
 
             terminalRepository.save(terminal);
             System.out.println("저장");
         }
+    }
+
+    public List<TerminalDto> getTerminals() {
+        return terminalRepository.findAll(Sort.by("terminalName"))
+                .stream()
+                .map(TerminalDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<BusScheduleDto> getBusSchedule(String departureTerminalId, String arrivalTerminalId, LocalDate departureDate) {
+        List<BusScheduleDto> allSchedules = new ArrayList<>();
+
+        try {
+            String depDateStr = departureDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+            for (int i = 1; i <= 10; i++) {
+                StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1613000/ExpBusInfoService/getStrtpntAlocFndExpbusInfo");
+                urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + AppConfig.openApiKey);
+                urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + i);
+                urlBuilder.append("&" + URLEncoder.encode("depPlandTime", "UTF-8") + "=" + depDateStr);
+                urlBuilder.append("&" + URLEncoder.encode("depTerminalId", "UTF-8") + "=" + departureTerminalId);
+                urlBuilder.append("&" + URLEncoder.encode("arrTerminalId", "UTF-8") + "=" + arrivalTerminalId);
+                urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + 30);
+                urlBuilder.append("&" + URLEncoder.encode("_type", "UTF-8") + "=" + "json");
+
+                URL url = new URL(urlBuilder.toString());
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Content-type", "application/json");
+
+                BufferedReader br = (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300)
+                        ? new BufferedReader(new InputStreamReader(conn.getInputStream()))
+                        : new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) sb.append(line);
+
+                br.close();
+                conn.disconnect();
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+                JsonNode itemNode = objectMapper.readTree(sb.toString()).path("response").path("body").path("items").path("item");
+
+                if (itemNode.isMissingNode() || !itemNode.isArray()) {
+                    break;
+                }
+
+                List<BusScheduleDto> schedules = Arrays.asList(objectMapper.treeToValue(itemNode, BusScheduleDto[].class));
+                allSchedules.addAll(schedules);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return allSchedules;
+    }
+
+    public void addBusSchedule(BusRegisterDto busRegisterDto, Member member){
+
+        if(busRepository.existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTime(
+                member, busRegisterDto.getDepartureName(), busRegisterDto.getArrivalName(),
+                busRegisterDto.getDepartureTime(), busRegisterDto.getArrivalTime()
+        )){
+            throw new GlobalException(
+                    Msg.E400_1_ALREADY_REGISTERED_BUS.getCode(),
+                    Msg.E400_1_ALREADY_REGISTERED_BUS.getMsg());
+        }
+
+        Bus bus = Bus.builder()
+                .departureName(busRegisterDto.getDepartureName())
+                .arrivalName(busRegisterDto.getArrivalName())
+                .departureTime(busRegisterDto.getDepartureTime())
+                .arrivalTime(busRegisterDto.getArrivalTime())
+                .busGrade(busRegisterDto.getBusGrade())
+                .member(member)
+                .build();
+
+        busRepository.save(bus);
     }
 }
