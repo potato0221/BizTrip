@@ -5,7 +5,7 @@
 	let myData: components['schemas']['MemberDto'][] = [];
 
 	const addCity = async () => {
-		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/ktx/addCity');
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/train/addCity');
 
 		if (data) {
 			if (data.resultCode === '200-0') {
@@ -19,7 +19,7 @@
 	};
 
 	const addStation = async () => {
-		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/ktx/addStation');
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/train/addStation');
 
 		if (data) {
 			if (data.resultCode === '200-0') {
@@ -33,7 +33,7 @@
 	};
 
 	const addTrainType = async () => {
-		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/ktx/addTrainType');
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/train/addTrainType');
 
 		if (data) {
 			if (data.resultCode === '200-0') {
@@ -65,7 +65,7 @@
 
 		if (data) {
 			if (data.resultCode === '200-0') {
-				rq.msgInfo('터미널널이 추가 되었습니다.');
+				rq.msgInfo('터미널이 추가 되었습니다.');
 			} else {
 				rq.msgError(data.msg);
 			}

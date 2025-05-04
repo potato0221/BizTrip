@@ -1,17 +1,28 @@
 package com.ll.biztrip.domain.travel.train.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ll.biztrip.domain.travel.train.entity.Station;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+import static lombok.AccessLevel.PROTECTED;
+
+@AllArgsConstructor(access = PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
+@Builder
+@Getter
 public class StationDto {
-    @JsonProperty("nodeid")
+
     private String stationId;
 
-    @JsonProperty("nodename")
     private String stationName;
+
+    private String cityName;
+
+    public StationDto(Station station){
+        this.stationId = station.getStationId();
+        this.stationName = station.getStationName();
+        this.cityName = station.getTrainCity().getCityName();
+    }
 }
