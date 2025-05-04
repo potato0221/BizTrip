@@ -21,7 +21,7 @@ public class ApiV1TrainController {
     private final Rq rq;
 
     @PostMapping("/addCity")
-    @Operation(summary = "Ktx 도시 등록")
+    @Operation(summary = "기차 도시 등록")
     public RsData<Empty> addCities() {
 
         if(!rq.isAdmin()){
@@ -30,6 +30,20 @@ public class ApiV1TrainController {
         }
 
         trainService.updateKtxCity();
+
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+    }
+
+    @PostMapping("/addTrainType")
+    @Operation(summary = "기차 종류 등록")
+    public RsData<Empty> addTrainType() {
+
+        if(!rq.isAdmin()){
+            System.out.println("권한 부족");
+            return RsData.of(Msg.E403_0_FORBIDDEN.getCode(),Msg.E403_0_FORBIDDEN.getMsg());
+        }
+
+        trainService.updateTrainType();
 
         return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
     }

@@ -32,6 +32,20 @@
 		}
 	};
 
+	const addTrainType = async () => {
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/ktx/addTrainType');
+
+		if (data) {
+			if (data.resultCode === '200-0') {
+				rq.msgInfo('기차 종류가 추가 되었습니다.');
+			} else {
+				rq.msgError(data.msg);
+			}
+		} else if (error) {
+			rq.msgError('API 호출 오류');
+		}
+	};
+
 	const addAirport = async () => {
 		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/flight/addAirport');
 
@@ -83,14 +97,21 @@
 				<button
 					on:click={addCity}
 					class="inline-block rounded-md border border-gray-400 bg-white px-2 py-1 text-sm font-medium font-semibold text-gray-800 shadow-sm hover:bg-gray-700 hover:text-white focus:outline-none"
-					>Ktx 도시 추가</button
+					>기차역 도시</button
 				>
 			</div>
 			<div class="mr-2">
 				<button
 					on:click={addStation}
 					class="inline-block rounded-md border border-gray-400 bg-white px-2 py-1 text-sm font-medium font-semibold text-gray-800 shadow-sm hover:bg-gray-700 hover:text-white focus:outline-none"
-					>기차역 추가</button
+					>기차역</button
+				>
+			</div>
+			<div class="mr-2">
+				<button
+					on:click={addTrainType}
+					class="inline-block rounded-md border border-gray-400 bg-white px-2 py-1 text-sm font-medium font-semibold text-gray-800 shadow-sm hover:bg-gray-700 hover:text-white focus:outline-none"
+					>기차 종류</button
 				>
 			</div>
 		</div>

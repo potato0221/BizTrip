@@ -3,12 +3,15 @@ package com.ll.biztrip.domain.travel.train.service;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ll.biztrip.domain.travel.train.dto.TrainCityDto;
 import com.ll.biztrip.domain.travel.train.dto.StationDto;
-import com.ll.biztrip.domain.travel.train.entity.TrainCity;
+import com.ll.biztrip.domain.travel.train.dto.TrainCityDto;
+import com.ll.biztrip.domain.travel.train.dto.TrainTypeDto;
 import com.ll.biztrip.domain.travel.train.entity.Station;
-import com.ll.biztrip.domain.travel.train.repository.TrainCityRepository;
+import com.ll.biztrip.domain.travel.train.entity.TrainCity;
+import com.ll.biztrip.domain.travel.train.entity.TrainType;
 import com.ll.biztrip.domain.travel.train.repository.StationRepository;
+import com.ll.biztrip.domain.travel.train.repository.TrainCityRepository;
+import com.ll.biztrip.domain.travel.train.repository.TrainTypeRepository;
 import com.ll.biztrip.global.app.AppConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,7 @@ public class TrainService {
 
     private final TrainCityRepository trainCityRepository;
     private final StationRepository stationRepository;
+    private final TrainTypeRepository trainTypeRepository;
 
     public void updateKtxCity() {
         if (trainCityRepository.count() > 0) {
@@ -225,4 +229,93 @@ public class TrainService {
             System.out.println("저장");
         }
     }
+
+    public void updateTrainType() {
+        if (trainTypeRepository.count() > 0) {
+            System.out.println("이미 데이터가 존재합니다. 요청을 취소 합니다.");
+            return;
+        }
+
+        try {
+            for (int i = 1; i <= 10; i++) {
+                StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1613000/TrainInfoService/getVhcleKndList");
+                urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + AppConfig.openApiKey);
+                urlBuilder.append("&" + URLEncoder.encode("_type", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8"));
+
+                URL url = new URL(urlBuilder.toString());
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                conn.setRequestMethod("GET");
+
+                conn.setRequestProperty("Content-type", "application/json");
+
+                System.out.print(i + "번째 통신 결과 : ");
+
+                if (conn.getResponseCode() == 200) {
+                    System.out.println("성공");
+                } else {
+                    System.out.println("실패");
+                }
+
+                BufferedReader br;
+
+                if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+                    br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                } else {
+                    br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+                }
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                br.close();
+                conn.disconnect();
+
+                ObjectMapper objectMapper = new ObjectMapper();
+
+                JsonNode node1 = objectMapper.readTree(sb.toString());
+
+                JsonNode node2 = node1.path("response").path("body").path("items").path("item");
+
+                if (node2.isMissingNode() || !node2.isArray()) {
+                    System.out.println("데이터가 존재하지 않습니다.");
+                    return;
+                }
+
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+                List<TrainTypeDto> trainTypeDtos = Arrays.asList(objectMapper.treeToValue(node2, TrainTypeDto[].class));
+
+                saveTrainTypes(trainTypeDtos);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Transactional
+    public void saveTrainTypes(List<TrainTypeDto> trainTypeDtos) {
+
+        for(TrainTypeDto trainTypeDto : trainTypeDtos){
+
+            if(trainTypeRepository.existsByTrainId(trainTypeDto.getTrainId())){
+                continue;
+            }
+
+            TrainType trainType = TrainType.builder()
+                    .trainId(trainTypeDto.getTrainId())
+                    .trainName(trainTypeDto.getTrainName())
+                    .build();
+
+            trainTypeRepository.save(trainType);
+            System.out.println("저장");
+        }
+    }
+
+
 }

@@ -27,7 +27,7 @@
 </script>
 
 <div class="flex flex-col items-center justify-center gap-20">
-	<h1 class="mt-8 text-5xl font-bold">My Air Hub</h1>
+	<h1 class="mt-8 text-5xl font-bold">BizTrip</h1>
 	<div class="space-y-4">
 		<div class="flex justify-center">
 			<a href={rq.getKakaoLoginUrl()}>
