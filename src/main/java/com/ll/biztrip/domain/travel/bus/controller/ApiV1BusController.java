@@ -1,9 +1,12 @@
 package com.ll.biztrip.domain.travel.bus.controller;
 
 
+import com.ll.biztrip.domain.member.member.entity.Member;
+import com.ll.biztrip.domain.travel.bus.dto.BusRegisterDto;
 import com.ll.biztrip.domain.travel.bus.dto.BusScheduleDto;
 import com.ll.biztrip.domain.travel.bus.dto.TerminalDto;
 import com.ll.biztrip.domain.travel.bus.service.BusService;
+import com.ll.biztrip.global.exceptions.GlobalException;
 import com.ll.biztrip.global.msg.Msg;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
@@ -62,5 +65,20 @@ public class ApiV1BusController {
         List<BusScheduleDto> scheduleDtos = busService.getBusSchedule(departureTerminalId, arrivalTerminalId, parsedDate);
 
         return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), scheduleDtos);
+    }
+
+    @PostMapping("/register")
+    @Operation(summary = "내가 탑승 할 버스 등록")
+    public RsData<Empty> addMyBusSchedule(
+            @RequestBody BusRegisterDto busRegisterDto
+    ){
+        if(rq.getMember()==null){
+            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
+        }else{
+            Member member = rq.getMember();
+            busService.addBusSchedule(busRegisterDto, member);
+        }
+
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
     }
 }

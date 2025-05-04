@@ -3,12 +3,18 @@ package com.ll.biztrip.domain.travel.bus.service;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ll.biztrip.domain.member.member.entity.Member;
 import com.ll.biztrip.domain.travel.bus.dto.AddTerminalDto;
+import com.ll.biztrip.domain.travel.bus.dto.BusRegisterDto;
 import com.ll.biztrip.domain.travel.bus.dto.BusScheduleDto;
 import com.ll.biztrip.domain.travel.bus.dto.TerminalDto;
+import com.ll.biztrip.domain.travel.bus.entity.Bus;
 import com.ll.biztrip.domain.travel.bus.entity.Terminal;
+import com.ll.biztrip.domain.travel.bus.repository.BusRepository;
 import com.ll.biztrip.domain.travel.bus.repository.TerminalRepository;
 import com.ll.biztrip.global.app.AppConfig;
+import com.ll.biztrip.global.exceptions.GlobalException;
+import com.ll.biztrip.global.msg.Msg;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -32,6 +38,7 @@ import java.util.stream.Collectors;
 public class BusService {
 
     private final TerminalRepository terminalRepository;
+    private final BusRepository busRepository;
 
     public void updateTerminal() {
         if (terminalRepository.count() > 0) {
@@ -183,5 +190,28 @@ public class BusService {
         }
 
         return allSchedules;
+    }
+
+    public void addBusSchedule(BusRegisterDto busRegisterDto, Member member){
+
+        if(busRepository.existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTime(
+                member, busRegisterDto.getDepartureName(), busRegisterDto.getArrivalName(),
+                busRegisterDto.getDepartureTime(), busRegisterDto.getArrivalTime()
+        )){
+            throw new GlobalException(
+                    Msg.E400_1_ALREADY_REGISTERED_BUS.getCode(),
+                    Msg.E400_1_ALREADY_REGISTERED_BUS.getMsg());
+        }
+
+        Bus bus = Bus.builder()
+                .departureName(busRegisterDto.getDepartureName())
+                .arrivalName(busRegisterDto.getArrivalName())
+                .departureTime(busRegisterDto.getDepartureTime())
+                .arrivalTime(busRegisterDto.getArrivalTime())
+                .busGrade(busRegisterDto.getBusGrade())
+                .member(member)
+                .build();
+
+        busRepository.save(bus);
     }
 }

@@ -17,6 +17,11 @@
 	let showArrivalList = false;
 
 	let busSchedules: components['schemas']['BusScheduleDto'][] = [];
+	let selectedIndex: number | null = null;
+
+	function toISO(str: string): string {
+		return `${str.slice(0, 4)}-${str.slice(4, 6)}-${str.slice(6, 8)}T${str.slice(8, 10)}:${str.slice(10, 12)}:00`;
+	}
 
 	async function loadBusTerminals() {
 		loading = true;
@@ -26,9 +31,7 @@
 	}
 
 	rq.effect(() => {
-		if (selectedTab === 'bus') {
-			loadBusTerminals();
-		}
+		if (selectedTab === 'bus') loadBusTerminals();
 	});
 
 	function filterDepartureList() {
@@ -65,7 +68,7 @@
 
 	async function searchRoute() {
 		if (!departure || !arrival || !departureDate) {
-			alert('출발일, 출발지, 도착지를 모두 입력하세요.');
+			rq.msgError('출발일, 출발지, 도착지를 모두 입력하세요.');
 			return;
 		}
 
@@ -73,11 +76,11 @@
 		const arrivalTerminal = terminalList.find((t) => t.terminalName === arrival);
 
 		if (!departureTerminal || !arrivalTerminal) {
-			alert('입력하신 터미널명을 다시 확인해주세요.');
+			rq.msgError('입력하신 터미널명을 다시 확인해주세요.');
 			return;
 		}
 
-		const { data, error } = await rq.apiEndPoints().GET('/api/v1/travel/bus/schedule', {
+		const { data } = await rq.apiEndPoints().GET('/api/v1/travel/bus/schedule', {
 			params: {
 				query: {
 					departureTerminalId: departureTerminal.terminalId,
@@ -88,7 +91,44 @@
 		});
 
 		busSchedules = data?.data ?? [];
-		console.log(busSchedules);
+		selectedIndex = null;
+	}
+
+	function formatTerminalLabel(name: string, id: string) {
+		return `${name}(${id})`;
+	}
+
+	async function registerSchedule() {
+		if (selectedIndex === null) return;
+		const selected = busSchedules[selectedIndex];
+
+		const departureTerminal = terminalList.find((t) => t.terminalName === selected.depPlaceNm);
+		const arrivalTerminal = terminalList.find((t) => t.terminalName === selected.arrPlaceNm);
+
+		if (!departureTerminal || !arrivalTerminal) {
+			rq.msgError('터미널 정보를 확인할 수 없습니다.');
+			return;
+		}
+
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/bus/register', {
+			body: {
+				departureName: formatTerminalLabel(
+					departureTerminal.terminalName,
+					departureTerminal.terminalId
+				),
+				arrivalName: formatTerminalLabel(arrivalTerminal.terminalName, arrivalTerminal.terminalId),
+				departureTime: toISO(selected.depPlandTime),
+				arrivalTime: toISO(selected.arrPlandTime),
+				busGrade: selected.gradeNm
+			}
+		});
+
+		if (error) {
+			rq.msgError(error.msg);
+			return;
+		}
+
+		rq.msgInfo(data.msg);
 	}
 </script>
 
@@ -220,11 +260,26 @@
 						{busSchedules[0].depPlaceNm} → {busSchedules[0].arrPlaceNm}
 					</h3>
 					<ul class="space-y-2">
-						{#each busSchedules as schedule}
-							<li class="border border-gray-300 rounded p-3 shadow-sm">
+						{#each busSchedules as schedule, idx}
+							<li
+								class="border rounded p-3 shadow-sm transition-all cursor-pointer hover:bg-gray-50"
+								class:border-blue-900={selectedIndex === idx}
+								class:border-2={selectedIndex === idx}
+								on:click={() => (selectedIndex = idx)}
+							>
 								<p class="text-sm text-gray-700">출발: {formatTimeOnly(schedule.depPlandTime)}</p>
 								<p class="text-sm text-gray-700">도착: {formatTimeOnly(schedule.arrPlandTime)}</p>
 								<p class="text-sm text-gray-600">등급: {schedule.gradeNm}</p>
+								{#if selectedIndex === idx}
+									<div class="flex justify-end">
+										<button
+											on:click|stopPropagation={registerSchedule}
+											class="mt-2 px-3 py-1 text-sm font-semibold text-blue-900 border border-blue-900 rounded hover:bg-blue-900 hover:text-white"
+										>
+											등록
+										</button>
+									</div>
+								{/if}
 							</li>
 						{/each}
 					</ul>
