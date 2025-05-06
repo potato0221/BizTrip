@@ -130,7 +130,6 @@
 	}
 </script>
 
-<!-- ✅ 여기가 HTML 렌더링 영역 -->
 <div class="mb-4 space-y-4">
 	<!-- 출발일 -->
 	<div>
@@ -176,7 +175,7 @@
 			{/if}
 		</div>
 
-		<!-- 🔁 리버스 버튼 -->
+		<!-- 리버스 버튼 -->
 		<div class="flex items-center h-full pt-6">
 			<button
 				on:click={() => {
@@ -230,7 +229,7 @@
 		</div>
 	</div>
 
-	<!-- ✅ 조회 결과 리스트 -->
+	<!-- 조회 결과 리스트 -->
 	{#if busSchedules.length > 0}
 		<h3 class="text-lg font-bold mt-6 mb-2">
 			{formatDateOnly(busSchedules[0].depPlandTime)}

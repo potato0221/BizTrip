@@ -1,6 +1,6 @@
 package com.ll.biztrip.domain.travel.flight.dto;
 
-import com.ll.biztrip.domain.travel.flight.entity.Airport;
+import com.ll.biztrip.domain.travel.flight.entity.Airline;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,14 +12,14 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @Builder
 @Getter
-public class AirportDto {
+public class AirlineDto {
 
-    private String airportId;
+    private String airlineId;
 
-    private String airportName;
+    private String airlineName;
 
-    public AirportDto(Airport airport){
-        this.airportId = airport.getAirportId();
-        this.airportName = airport.getAirportName();
+    public AirlineDto(Airline airline){
+        this.airlineId = airline.getAirlineId();
+        this.airlineName = airline.getAirlineName();
     }
 }
