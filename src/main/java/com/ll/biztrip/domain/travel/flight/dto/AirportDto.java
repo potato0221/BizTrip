@@ -1,17 +1,25 @@
 package com.ll.biztrip.domain.travel.flight.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ll.biztrip.domain.travel.flight.entity.Airport;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+import static lombok.AccessLevel.PROTECTED;
+
+@AllArgsConstructor(access = PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
+@Builder
+@Getter
 public class AirportDto {
-    @JsonProperty("airportId")
+
     private String airportId;
 
-    @JsonProperty("airportNm")
     private String airportName;
+
+    public AirportDto(Airport airport){
+        this.airportId = airport.getAirportId();
+        this.airportName = airport.getAirportName();
+    }
 }

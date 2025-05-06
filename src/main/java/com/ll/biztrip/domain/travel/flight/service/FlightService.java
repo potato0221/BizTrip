@@ -3,14 +3,19 @@ package com.ll.biztrip.domain.travel.flight.service;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ll.biztrip.domain.travel.flight.dto.AirlineDto;
-import com.ll.biztrip.domain.travel.flight.dto.AirportDto;
+import com.ll.biztrip.domain.member.member.entity.Member;
+import com.ll.biztrip.domain.travel.flight.dto.*;
 import com.ll.biztrip.domain.travel.flight.entity.Airline;
 import com.ll.biztrip.domain.travel.flight.entity.Airport;
+import com.ll.biztrip.domain.travel.flight.entity.Flight;
 import com.ll.biztrip.domain.travel.flight.repository.AirlineRepository;
 import com.ll.biztrip.domain.travel.flight.repository.AirportRepository;
+import com.ll.biztrip.domain.travel.flight.repository.FlightRepository;
 import com.ll.biztrip.global.app.AppConfig;
+import com.ll.biztrip.global.exceptions.GlobalException;
+import com.ll.biztrip.global.msg.Msg;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +24,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +38,7 @@ public class FlightService {
 
     private final AirportRepository airportRepository;
     private final AirlineRepository airlineRepository;
+    private final FlightRepository flightRepository;
 
     public void updateAirport() {
         if (airportRepository.count() > 0) {
@@ -93,9 +103,9 @@ public class FlightService {
                 // JSON엔 존재하나 DTO에는 존재하지 않는 매핑 값에 대해 처리
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 // DTO List 생성
-                List<AirportDto> airportDtos = Arrays.asList(objectMapper.treeToValue(node2, AirportDto[].class));
+                List<AddAirportDto> addAirportDtos = Arrays.asList(objectMapper.treeToValue(node2, AddAirportDto[].class));
 
-                saveAirports(airportDtos);
+                saveAirports(addAirportDtos);
             }
 
         } catch (Exception e) {
@@ -104,17 +114,17 @@ public class FlightService {
     }
 
     @Transactional
-    public void saveAirports(List<AirportDto> airportDtos) {
+    public void saveAirports(List<AddAirportDto> addAirportDtos) {
 
-        for(AirportDto airportDto : airportDtos){
+        for(AddAirportDto addAirportDto : addAirportDtos){
 
-            if(airportRepository.existsByAirportId(airportDto.getAirportId())){
+            if(airportRepository.existsByAirportId(addAirportDto.getAirportId())){
                 continue;
             }
 
             Airport airport = Airport.builder()
-                    .airportId(airportDto.getAirportId())
-                    .airportName(airportDto.getAirportName())
+                    .airportId(addAirportDto.getAirportId())
+                    .airportName(addAirportDto.getAirportName())
                     .build();
 
             airportRepository.save(airport);
@@ -179,9 +189,9 @@ public class FlightService {
 
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-                List<AirlineDto> airlineDtos = Arrays.asList(objectMapper.treeToValue(node2, AirlineDto[].class));
+                List<AddAirlineDto> addAirlineDtos = Arrays.asList(objectMapper.treeToValue(node2, AddAirlineDto[].class));
 
-                saveAirlines(airlineDtos);
+                saveAirlines(addAirlineDtos);
             }
 
         } catch (Exception e) {
@@ -190,21 +200,115 @@ public class FlightService {
     }
 
     @Transactional
-    public void saveAirlines(List<AirlineDto> airlineDtos) {
+    public void saveAirlines(List<AddAirlineDto> addAirlineDtos) {
 
-        for(AirlineDto airlineDto : airlineDtos){
+        for(AddAirlineDto addAirlineDto : addAirlineDtos){
 
-            if(airportRepository.existsByAirportId(airlineDto.getAirlineId())){
+            if(airportRepository.existsByAirportId(addAirlineDto.getAirlineId())){
                 continue;
             }
 
             Airline airline = Airline.builder()
-                    .airlineId(airlineDto.getAirlineId())
-                    .airlineName(airlineDto.getAirlineName())
+                    .airlineId(addAirlineDto.getAirlineId())
+                    .airlineName(addAirlineDto.getAirlineName())
                     .build();
 
             airlineRepository.save(airline);
             System.out.println("저장");
         }
+    }
+
+    public List<FlightScheduleDto> getFlightSchedule(String departureAirportId, String arrivalAirportId, LocalDate departureDate, String airlineId) {
+        List<FlightScheduleDto> allSchedules = new ArrayList<>();
+
+        try {
+            String depDateStr = departureDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+            for (int i = 1; i <= 10; i++) {
+                StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1613000/DmstcFlightNvgInfoService/getFlightOpratInfoList");
+                urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + AppConfig.openApiKey);
+                urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + i);
+                urlBuilder.append("&" + URLEncoder.encode("depPlandTime", "UTF-8") + "=" + depDateStr);
+                if(!airlineId.equals("all")){
+                    urlBuilder.append("&" + URLEncoder.encode("airlineId", "UTF-8") + "=" + airlineId);
+                }
+                urlBuilder.append("&" + URLEncoder.encode("depAirportId", "UTF-8") + "=" + departureAirportId);
+                urlBuilder.append("&" + URLEncoder.encode("arrAirportId", "UTF-8") + "=" + arrivalAirportId);
+                urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + 30);
+                urlBuilder.append("&" + URLEncoder.encode("_type", "UTF-8") + "=" + "json");
+
+
+                URL url = new URL(urlBuilder.toString());
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Content-type", "application/json");
+
+                BufferedReader br = (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300)
+                        ? new BufferedReader(new InputStreamReader(conn.getInputStream()))
+                        : new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) sb.append(line);
+
+                br.close();
+                conn.disconnect();
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+                JsonNode itemNode = objectMapper.readTree(sb.toString()).path("response").path("body").path("items").path("item");
+
+                if (itemNode.isMissingNode() || !itemNode.isArray()) {
+                    break;
+                }
+
+                List<FlightScheduleDto> schedules = Arrays.asList(objectMapper.treeToValue(itemNode, FlightScheduleDto[].class));
+                allSchedules.addAll(schedules);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return allSchedules;
+    }
+
+    public List<AirlineDto> getAirlines() {
+        return airlineRepository.findAll(Sort.by("airlineName"))
+                .stream()
+                .map(AirlineDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<AirportDto> getAirports() {
+        return airportRepository.findAll(Sort.by("airportName"))
+                .stream()
+                .map(AirportDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public void addFlightSchedule(FlightRegisterDto flightRegisterDto, Member member) {
+        if(flightRepository.existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTimeAndFlightNumberAndAirline(
+                member, flightRegisterDto.getDepartureName(), flightRegisterDto.getArrivalName(),
+                flightRegisterDto.getDepartureTime(), flightRegisterDto.getArrivalTime(),
+                flightRegisterDto.getFlightNumber(), flightRegisterDto.getAirline()
+        )){
+            throw new GlobalException(
+                    Msg.E400_1_ALREADY_REGISTERED_BUS.getCode(),
+                    Msg.E400_1_ALREADY_REGISTERED_BUS.getMsg());
+        }
+
+        Flight flight = Flight.builder()
+                .departureName(flightRegisterDto.getDepartureName())
+                .arrivalName(flightRegisterDto.getArrivalName())
+                .departureTime(flightRegisterDto.getDepartureTime())
+                .arrivalTime(flightRegisterDto.getArrivalTime())
+                .flightNumber(flightRegisterDto.getFlightNumber())
+                .airline(flightRegisterDto.getAirline())
+                .member(member)
+                .build();
+
+        flightRepository.save(flight);
+
     }
 }
