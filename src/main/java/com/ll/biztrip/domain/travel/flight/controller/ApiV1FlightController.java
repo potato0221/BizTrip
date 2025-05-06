@@ -34,4 +34,18 @@ public class ApiV1FlightController {
         return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
     }
 
+    @PostMapping("/addAirline")
+    @Operation(summary = "항공사 등록")
+    public RsData<Empty> addAirlines() {
+
+        if(!rq.isAdmin()){
+            System.out.println("권한 부족");
+            return RsData.of(Msg.E403_0_FORBIDDEN.getCode(),Msg.E403_0_FORBIDDEN.getMsg());
+        }
+
+        flightService.updateAirline();
+
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+    }
+
 }

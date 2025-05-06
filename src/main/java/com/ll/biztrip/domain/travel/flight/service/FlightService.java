@@ -3,8 +3,11 @@ package com.ll.biztrip.domain.travel.flight.service;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ll.biztrip.domain.travel.flight.dto.AirlineDto;
 import com.ll.biztrip.domain.travel.flight.dto.AirportDto;
+import com.ll.biztrip.domain.travel.flight.entity.Airline;
 import com.ll.biztrip.domain.travel.flight.entity.Airport;
+import com.ll.biztrip.domain.travel.flight.repository.AirlineRepository;
 import com.ll.biztrip.domain.travel.flight.repository.AirportRepository;
 import com.ll.biztrip.global.app.AppConfig;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ import java.util.List;
 public class FlightService {
 
     private final AirportRepository airportRepository;
+    private final AirlineRepository airlineRepository;
 
     public void updateAirport() {
         if (airportRepository.count() > 0) {
@@ -114,6 +118,92 @@ public class FlightService {
                     .build();
 
             airportRepository.save(airport);
+            System.out.println("저장");
+        }
+    }
+
+    public void updateAirline() {
+        if (airlineRepository.count() > 0) {
+            System.out.println("이미 데이터가 존재합니다. 요청을 취소 합니다.");
+            return;
+        }
+
+        try {
+            for (int i = 1; i <= 1; i++) {
+                StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1613000/DmstcFlightNvgInfoService/getAirmanList");
+                urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + AppConfig.openApiKey);
+                urlBuilder.append("&" + URLEncoder.encode("_type", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8"));
+
+                URL url = new URL(urlBuilder.toString());
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                conn.setRequestMethod("GET");
+
+                conn.setRequestProperty("Content-type", "application/json");
+
+                System.out.print(i + "번째 통신 결과 : ");
+
+                if (conn.getResponseCode() == 200) {
+                    System.out.println("성공");
+                } else {
+                    System.out.println("실패");
+                }
+
+                BufferedReader br;
+
+                if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+                    br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                } else {
+                    br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+                }
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                br.close();
+                conn.disconnect();
+
+                ObjectMapper objectMapper = new ObjectMapper();
+
+                JsonNode node1 = objectMapper.readTree(sb.toString());
+                JsonNode node2 = node1.path("response").path("body").path("items").path("item");
+
+                if (node2.isMissingNode() || !node2.isArray()) {
+                    System.out.println("데이터가 존재하지 않습니다.");
+                    return;
+                }
+
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+                List<AirlineDto> airlineDtos = Arrays.asList(objectMapper.treeToValue(node2, AirlineDto[].class));
+
+                saveAirlines(airlineDtos);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Transactional
+    public void saveAirlines(List<AirlineDto> airlineDtos) {
+
+        for(AirlineDto airlineDto : airlineDtos){
+
+            if(airportRepository.existsByAirportId(airlineDto.getAirlineId())){
+                continue;
+            }
+
+            Airline airline = Airline.builder()
+                    .airlineId(airlineDto.getAirlineId())
+                    .airlineName(airlineDto.getAirlineName())
+                    .build();
+
+            airlineRepository.save(airline);
             System.out.println("저장");
         }
     }
