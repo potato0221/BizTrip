@@ -1,8 +1,8 @@
 package com.ll.biztrip.global.security.util;
 
-import com.ll.biztrip.global.app.AppConfig;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
@@ -15,8 +15,11 @@ import java.util.Base64;
 @Component
 public class AESUtil {
 
-    private static final String KEY = AppConfig.getAesSecretKey();
-    private static final String INIT_VECTOR = AppConfig.getInitVector();
+    @Value("${custom.aes.key}")
+    private String KEY;
+
+    @Value("${custom.aes.initVector}")
+    private  String INIT_VECTOR;
     private SecretKeySpec secretKeySpec;
     private IvParameterSpec ivParameterSpec;
 

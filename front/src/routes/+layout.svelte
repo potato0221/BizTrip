@@ -104,7 +104,7 @@
 	<div class="container mx-auto flex items-center justify-around">
 		<div class="flex flex-1 flex-col items-center">
 			{#if rq.isLogin()}
-				<a href="/addTravel">
+				<a href="/add-transport">
 					<div class="flex items-center justify-center">
 						<div
 							class={isAddTravel
@@ -154,7 +154,7 @@
 		</div>
 		<div class="flex flex-1 flex-col items-center">
 			{#if rq.isLogin()}
-				<a href="/myTravel">
+				<a href="/trip-manager">
 					<div class="flex items-center justify-center">
 						<div
 							class={isMyTravel
