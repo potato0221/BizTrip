@@ -20,6 +20,22 @@ public class AppConfig {
     @Getter
     public static String openApiKey;
 
+    @Getter
+    public static String aesSecretKey;
+
+    @Getter
+    public static String initVector;
+
+    @Value("${custom.aes.key}")
+    public void setAesKey(String aesKey){
+        this.aesSecretKey = aesKey;
+    }
+
+    @Value("${custom.aes.initVector}")
+    public void setInitVector(String initVector){
+        this.initVector = initVector;
+    }
+
     @Value("${custom.jwt.secretKey}")
     public void setJwtSecretKey(String jwtSecretKey) {
         this.jwtSecretKey = jwtSecretKey;
