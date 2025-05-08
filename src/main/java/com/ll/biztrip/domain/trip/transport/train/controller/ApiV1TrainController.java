@@ -2,13 +2,10 @@ package com.ll.biztrip.domain.trip.transport.train.controller;
 
 
 import com.ll.biztrip.domain.member.member.entity.Member;
-import com.ll.biztrip.domain.trip.transport.train.dto.StationDto;
-import com.ll.biztrip.domain.trip.transport.train.dto.TrainRegisterDto;
-import com.ll.biztrip.domain.trip.transport.train.dto.TrainScheduleDto;
-import com.ll.biztrip.domain.trip.transport.train.dto.TrainTypeDto;
+import com.ll.biztrip.domain.trip.transport.train.dto.*;
 import com.ll.biztrip.domain.trip.transport.train.service.TrainService;
-import com.ll.biztrip.global.exceptions.GlobalException;
 import com.ll.biztrip.global.enums.Msg;
+import com.ll.biztrip.global.exceptions.GlobalException;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;
@@ -116,5 +113,18 @@ public class ApiV1TrainController {
         }
 
         return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+    }
+
+    @GetMapping("/myList")
+    @Operation(summary = "내가 탈 기차 리스트")
+    public RsData<List<TrainDto>> getMyBuses(){
+
+        if(rq.getMember()==null){
+            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
+        }
+
+        List<TrainDto> trainDtos = trainService.getMyTrains(rq.getMember());
+
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), trainDtos);
     }
 }

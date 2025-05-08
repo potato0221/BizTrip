@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.biztrip.domain.member.member.entity.Member;
-import com.ll.biztrip.domain.trip.transport.bus.dto.AddTerminalDto;
-import com.ll.biztrip.domain.trip.transport.bus.dto.BusRegisterDto;
-import com.ll.biztrip.domain.trip.transport.bus.dto.BusScheduleDto;
-import com.ll.biztrip.domain.trip.transport.bus.dto.TerminalDto;
+import com.ll.biztrip.domain.trip.transport.bus.dto.*;
 import com.ll.biztrip.domain.trip.transport.bus.entity.Bus;
 import com.ll.biztrip.domain.trip.transport.bus.entity.Terminal;
 import com.ll.biztrip.domain.trip.transport.bus.repository.BusRepository;
@@ -214,5 +211,13 @@ public class BusService {
                 .build();
 
         busRepository.save(bus);
+    }
+
+    public List<BusDto> getMyBuses(Member member) {
+
+        return busRepository.findBusByMember(member)
+                .stream()
+                .map(BusDto::new)
+                .toList();
     }
 }

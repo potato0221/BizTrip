@@ -2,6 +2,7 @@ package com.ll.biztrip.domain.trip.trip.controller;
 
 
 import com.ll.biztrip.domain.member.member.entity.Member;
+import com.ll.biztrip.domain.trip.trip.dto.PlanListDto;
 import com.ll.biztrip.domain.trip.trip.dto.TripLegDto;
 import com.ll.biztrip.domain.trip.trip.dto.TripPlanDto;
 import com.ll.biztrip.domain.trip.trip.entity.TripPlan;
@@ -14,6 +15,8 @@ import com.ll.biztrip.standard.base.Empty;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/trip")
@@ -48,5 +51,18 @@ public class ApiV1TripController {
 
         return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg(),
                 new TripPlanDto(updatedPlan));
+    }
+
+    @GetMapping("/planList")
+    @Operation(summary = "등록된 플랜 리스트 조회")
+    public RsData<List<PlanListDto>> getPlans(){
+
+        if(rq.getMember()==null){
+            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
+        }
+
+        List<PlanListDto> planList = tripService.getPlanList(rq.getMember());
+
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), planList);
     }
 }

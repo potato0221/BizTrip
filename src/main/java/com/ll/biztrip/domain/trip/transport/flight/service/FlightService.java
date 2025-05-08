@@ -312,4 +312,12 @@ public class FlightService {
         flightRepository.save(flight);
 
     }
+
+    public List<FlightDto> getMyFlights(Member member) {
+
+        return flightRepository.findFlightByMember(member)
+                .stream()
+                .map(FlightDto::new)
+                .toList();
+    }
 }

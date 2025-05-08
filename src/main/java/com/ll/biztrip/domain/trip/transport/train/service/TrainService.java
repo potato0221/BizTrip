@@ -416,4 +416,12 @@ public class TrainService {
 
         trainRepository.save(train);
     }
+
+    public List<TrainDto> getMyTrains(Member member) {
+
+        return trainRepository.findTrainByMember(member)
+                .stream()
+                .map(TrainDto::new)
+                .toList();
+    }
 }

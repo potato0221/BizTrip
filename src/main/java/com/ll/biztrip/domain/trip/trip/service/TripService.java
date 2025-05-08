@@ -2,11 +2,11 @@ package com.ll.biztrip.domain.trip.trip.service;
 
 
 import com.ll.biztrip.domain.member.member.entity.Member;
+import com.ll.biztrip.domain.trip.trip.dto.PlanListDto;
 import com.ll.biztrip.domain.trip.trip.dto.TripLegDto;
 import com.ll.biztrip.domain.trip.trip.dto.TripPlanDto;
 import com.ll.biztrip.domain.trip.trip.entity.TripLeg;
 import com.ll.biztrip.domain.trip.trip.entity.TripPlan;
-import com.ll.biztrip.domain.trip.trip.repository.TripLegRepository;
 import com.ll.biztrip.domain.trip.trip.repository.TripPlanRepository;
 import com.ll.biztrip.global.enums.Msg;
 import com.ll.biztrip.global.enums.TransportType;
@@ -15,13 +15,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class TripService {
 
     private final TripPlanRepository tripPlanRepository;
-    private final TripLegRepository tripLegRepository;
 
     @Transactional
     public void addTripPlan(TripPlanDto tripPlanDto, Member member){
@@ -44,6 +45,17 @@ public class TripService {
                         Msg.E404_0_DATA_NOT_FOUND.getCode(),
                         Msg.E404_0_DATA_NOT_FOUND.getMsg()));
 
+        boolean exists = tripPlan.getLegs().stream().anyMatch(leg ->
+                leg.getTransportType().name().equalsIgnoreCase(tripLegDto.getTransportType()) &&
+                        leg.getTransportId().equals(tripLegDto.getTransportId())
+        );
+
+        if(exists){
+            throw new GlobalException(
+                    Msg.E400_4_ALREADY_REGISTERED_LEG.getCode(),
+                    Msg.E400_4_ALREADY_REGISTERED_LEG.getMsg());
+        }
+
         TripLeg tripLeg = TripLeg.builder()
                 .tripPlan(tripPlan)
                 .transportType(TransportType.valueOf(tripLegDto.getTransportType()))
@@ -57,5 +69,14 @@ public class TripService {
         tripPlan.getLegs().add(tripLeg);
 
         return tripPlanRepository.save(tripPlan);
+    }
+
+    public List<PlanListDto> getPlanList(Member member) {
+
+       return tripPlanRepository.findTripPlanByMember(member)
+               .stream()
+               .map(PlanListDto::new)
+               .toList();
+
     }
 }

@@ -2,13 +2,10 @@ package com.ll.biztrip.domain.trip.transport.flight.controller;
 
 
 import com.ll.biztrip.domain.member.member.entity.Member;
-import com.ll.biztrip.domain.trip.transport.flight.dto.AirlineDto;
-import com.ll.biztrip.domain.trip.transport.flight.dto.AirportDto;
-import com.ll.biztrip.domain.trip.transport.flight.dto.FlightRegisterDto;
-import com.ll.biztrip.domain.trip.transport.flight.dto.FlightScheduleDto;
+import com.ll.biztrip.domain.trip.transport.flight.dto.*;
 import com.ll.biztrip.domain.trip.transport.flight.service.FlightService;
-import com.ll.biztrip.global.exceptions.GlobalException;
 import com.ll.biztrip.global.enums.Msg;
+import com.ll.biztrip.global.exceptions.GlobalException;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;
@@ -102,6 +99,19 @@ public class ApiV1FlightController {
         }
 
         return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+    }
+
+    @GetMapping("/myList")
+    @Operation(summary = "내가 탈 항공편 리스트")
+    public RsData<List<FlightDto>> getMyBuses(){
+
+        if(rq.getMember()==null){
+            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
+        }
+
+        List<FlightDto> flightDtos = flightService.getMyFlights(rq.getMember());
+
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), flightDtos);
     }
 
 }
