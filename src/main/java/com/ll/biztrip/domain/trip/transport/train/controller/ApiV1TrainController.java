@@ -8,7 +8,7 @@ import com.ll.biztrip.domain.trip.transport.train.dto.TrainScheduleDto;
 import com.ll.biztrip.domain.trip.transport.train.dto.TrainTypeDto;
 import com.ll.biztrip.domain.trip.transport.train.service.TrainService;
 import com.ll.biztrip.global.exceptions.GlobalException;
-import com.ll.biztrip.global.msg.Msg;
+import com.ll.biztrip.global.enums.Msg;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;

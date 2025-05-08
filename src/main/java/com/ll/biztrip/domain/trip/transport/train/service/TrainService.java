@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.biztrip.domain.member.member.entity.Member;
-import com.ll.biztrip.domain.transport.train.dto.*;
+import com.ll.biztrip.domain.trip.transport.train.dto.*;
 import com.ll.biztrip.domain.trip.transport.train.entity.Station;
 import com.ll.biztrip.domain.trip.transport.train.entity.Train;
 import com.ll.biztrip.domain.trip.transport.train.entity.TrainCity;
@@ -13,10 +13,9 @@ import com.ll.biztrip.domain.trip.transport.train.repository.StationRepository;
 import com.ll.biztrip.domain.trip.transport.train.repository.TrainCityRepository;
 import com.ll.biztrip.domain.trip.transport.train.repository.TrainRepository;
 import com.ll.biztrip.domain.trip.transport.train.repository.TrainTypeRepository;
-import com.ll.biztrip.domain.trip.transport.train.dto.*;
 import com.ll.biztrip.global.app.AppConfig;
+import com.ll.biztrip.global.enums.Msg;
 import com.ll.biztrip.global.exceptions.GlobalException;
-import com.ll.biztrip.global.msg.Msg;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -394,6 +393,7 @@ public class TrainService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void addTrainSchedule(TrainRegisterDto trainRegisterDto, Member member){
 
         if(trainRepository.existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTime(
@@ -401,8 +401,8 @@ public class TrainService {
                 trainRegisterDto.getDepartureTime(), trainRegisterDto.getArrivalTime()
         )){
             throw new GlobalException(
-                    Msg.E400_1_ALREADY_REGISTERED_BUS.getCode(),
-                    Msg.E400_1_ALREADY_REGISTERED_BUS.getMsg());
+                    Msg.E400_2_ALREADY_REGISTERED_TRAIN.getCode(),
+                    Msg.E400_2_ALREADY_REGISTERED_TRAIN.getMsg());
         }
 
         Train train = Train.builder()

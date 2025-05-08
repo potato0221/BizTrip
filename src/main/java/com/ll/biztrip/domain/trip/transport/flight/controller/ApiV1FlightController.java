@@ -8,7 +8,7 @@ import com.ll.biztrip.domain.trip.transport.flight.dto.FlightRegisterDto;
 import com.ll.biztrip.domain.trip.transport.flight.dto.FlightScheduleDto;
 import com.ll.biztrip.domain.trip.transport.flight.service.FlightService;
 import com.ll.biztrip.global.exceptions.GlobalException;
-import com.ll.biztrip.global.msg.Msg;
+import com.ll.biztrip.global.enums.Msg;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;

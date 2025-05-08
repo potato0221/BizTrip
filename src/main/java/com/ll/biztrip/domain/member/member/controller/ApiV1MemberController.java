@@ -4,7 +4,7 @@ import com.ll.biztrip.domain.member.member.dto.MemberDto;
 import com.ll.biztrip.domain.member.member.dto.NicknameDto;
 import com.ll.biztrip.domain.member.member.entity.Member;
 import com.ll.biztrip.domain.member.member.service.MemberService;
-import com.ll.biztrip.global.msg.Msg;
+import com.ll.biztrip.global.enums.Msg;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;

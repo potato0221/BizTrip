@@ -1,4 +1,4 @@
-package com.ll.biztrip.global.msg;
+package com.ll.biztrip.global.enums;
 
 import lombok.Getter;
 
@@ -12,7 +12,10 @@ public enum Msg {
     E200_6_LOGOUT_SUCCEED("200-6","로그아웃 성공"),
     E401_0_UNAUTHORIZED("401-0", "로그인 후 이용 해 주세요"),
     E403_0_FORBIDDEN("403-0", "관리자 권한이 필요합니다"),
-    E400_1_ALREADY_REGISTERED_BUS("400-1", "이미 등록된 버스입니다");
+    E404_0_DATA_NOT_FOUND("404-0", "데이터를 찾을 수 없습니다."),
+    E400_1_ALREADY_REGISTERED_BUS("400-1", "이미 등록된 버스 입니다"),
+    E400_2_ALREADY_REGISTERED_TRAIN("400-2", "이미 등록된 기차 입니다"),
+    E400_3_ALREADY_REGISTERED_FLIGHT("400-3", "이미 등록된 항공편 입니다");
 
 
 

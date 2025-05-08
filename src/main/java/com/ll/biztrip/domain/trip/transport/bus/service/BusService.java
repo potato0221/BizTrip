@@ -14,7 +14,7 @@ import com.ll.biztrip.domain.trip.transport.bus.repository.BusRepository;
 import com.ll.biztrip.domain.trip.transport.bus.repository.TerminalRepository;
 import com.ll.biztrip.global.app.AppConfig;
 import com.ll.biztrip.global.exceptions.GlobalException;
-import com.ll.biztrip.global.msg.Msg;
+import com.ll.biztrip.global.enums.Msg;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -192,6 +192,7 @@ public class BusService {
         return allSchedules;
     }
 
+    @Transactional
     public void addBusSchedule(BusRegisterDto busRegisterDto, Member member){
 
         if(busRepository.existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTime(

@@ -1,0 +1,52 @@
+package com.ll.biztrip.domain.trip.trip.controller;
+
+
+import com.ll.biztrip.domain.member.member.entity.Member;
+import com.ll.biztrip.domain.trip.trip.dto.TripLegDto;
+import com.ll.biztrip.domain.trip.trip.dto.TripPlanDto;
+import com.ll.biztrip.domain.trip.trip.entity.TripPlan;
+import com.ll.biztrip.domain.trip.trip.service.TripService;
+import com.ll.biztrip.global.enums.Msg;
+import com.ll.biztrip.global.exceptions.GlobalException;
+import com.ll.biztrip.global.rq.Rq;
+import com.ll.biztrip.global.rsData.RsData;
+import com.ll.biztrip.standard.base.Empty;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/v1/trip")
+@RequiredArgsConstructor
+public class ApiV1TripController {
+
+    private final TripService tripService;
+    private final Rq rq;
+
+    @PostMapping("/addTripPlan")
+    @Operation(summary = "여행 계획 추가")
+    public RsData<Empty> addTripPlan(@RequestBody TripPlanDto tripPlanDto){
+
+        if(rq.getMember()==null){
+            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
+        }
+
+        Member member = rq.getMember();
+        tripService.addTripPlan(tripPlanDto, member);
+
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+
+    }
+
+    @PostMapping("/{tripPlanId}/addLeg")
+    @Operation(summary = "여행 계획에 탑승 할 교통수단 추가")
+    public RsData<TripPlanDto> addTripLeg(
+            @PathVariable Long tripPlanId,
+            @RequestBody TripLegDto tripLegDto){
+
+        TripPlan updatedPlan = tripService.addLeg(tripPlanId, tripLegDto);
+
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg(),
+                new TripPlanDto(updatedPlan));
+    }
+}

@@ -7,7 +7,7 @@ import com.ll.biztrip.domain.trip.transport.bus.dto.BusScheduleDto;
 import com.ll.biztrip.domain.trip.transport.bus.dto.TerminalDto;
 import com.ll.biztrip.domain.trip.transport.bus.service.BusService;
 import com.ll.biztrip.global.exceptions.GlobalException;
-import com.ll.biztrip.global.msg.Msg;
+import com.ll.biztrip.global.enums.Msg;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;

@@ -4,17 +4,16 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.biztrip.domain.member.member.entity.Member;
-import com.ll.biztrip.domain.transport.flight.dto.*;
+import com.ll.biztrip.domain.trip.transport.flight.dto.*;
 import com.ll.biztrip.domain.trip.transport.flight.entity.Airline;
 import com.ll.biztrip.domain.trip.transport.flight.entity.Airport;
 import com.ll.biztrip.domain.trip.transport.flight.entity.Flight;
 import com.ll.biztrip.domain.trip.transport.flight.repository.AirlineRepository;
 import com.ll.biztrip.domain.trip.transport.flight.repository.AirportRepository;
 import com.ll.biztrip.domain.trip.transport.flight.repository.FlightRepository;
-import com.ll.biztrip.domain.trip.transport.flight.dto.*;
 import com.ll.biztrip.global.app.AppConfig;
+import com.ll.biztrip.global.enums.Msg;
 import com.ll.biztrip.global.exceptions.GlobalException;
-import com.ll.biztrip.global.msg.Msg;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -288,6 +287,7 @@ public class FlightService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void addFlightSchedule(FlightRegisterDto flightRegisterDto, Member member) {
         if(flightRepository.existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTimeAndFlightNumberAndAirline(
                 member, flightRegisterDto.getDepartureName(), flightRegisterDto.getArrivalName(),
@@ -295,8 +295,8 @@ public class FlightService {
                 flightRegisterDto.getFlightNumber(), flightRegisterDto.getAirline()
         )){
             throw new GlobalException(
-                    Msg.E400_1_ALREADY_REGISTERED_BUS.getCode(),
-                    Msg.E400_1_ALREADY_REGISTERED_BUS.getMsg());
+                    Msg.E400_3_ALREADY_REGISTERED_FLIGHT.getCode(),
+                    Msg.E400_3_ALREADY_REGISTERED_FLIGHT.getMsg());
         }
 
         Flight flight = Flight.builder()
