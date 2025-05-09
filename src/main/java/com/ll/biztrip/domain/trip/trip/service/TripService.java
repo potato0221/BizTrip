@@ -8,6 +8,8 @@ import com.ll.biztrip.domain.trip.trip.dto.TripPlanDto;
 import com.ll.biztrip.domain.trip.trip.entity.TripLeg;
 import com.ll.biztrip.domain.trip.trip.entity.TripPlan;
 import com.ll.biztrip.domain.trip.trip.repository.TripPlanRepository;
+import com.ll.biztrip.domain.weather.weather.entity.LocationCodeMapping;
+import com.ll.biztrip.domain.weather.weather.service.WeatherService;
 import com.ll.biztrip.global.enums.Msg;
 import com.ll.biztrip.global.enums.TransportType;
 import com.ll.biztrip.global.exceptions.GlobalException;
@@ -23,6 +25,7 @@ import java.util.List;
 public class TripService {
 
     private final TripPlanRepository tripPlanRepository;
+    private final WeatherService weatherService;
 
     @Transactional
     public void addTripPlan(TripPlanDto tripPlanDto, Member member){
@@ -33,6 +36,15 @@ public class TripService {
                 .planName(tripPlanDto.getPlanName())
                 .member(member)
                 .build();
+
+        String locationCode = weatherService.findBestCode(tripPlanDto.getEndAddress());
+
+        LocationCodeMapping locationCodeMapping = LocationCodeMapping.builder()
+                .locationCode(locationCode)
+                .tripPlan(tripPlan)
+                .build();
+
+        tripPlan.connectLocationMapping(locationCodeMapping);
 
         tripPlanRepository.save(tripPlan);
     }
@@ -65,6 +77,8 @@ public class TripService {
                 .departureTime(tripLegDto.getDepartureTime())
                 .arrivalTime(tripLegDto.getArrivalTime())
                 .build();
+
+        tripLeg.setTripPlan(tripPlan);
 
         tripPlan.getLegs().add(tripLeg);
 
