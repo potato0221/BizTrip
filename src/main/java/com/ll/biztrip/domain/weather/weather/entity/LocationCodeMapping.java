@@ -17,7 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 @ToString(callSuper = true)
 public class LocationCodeMapping extends BaseEntity {
 
-    @Column(unique = true, length = 20)
+    @Column(length = 20)
     private String locationCode;
 
     @OneToOne(fetch = FetchType.LAZY)

@@ -30,8 +30,6 @@ public class TripService {
     @Transactional
     public void addTripPlan(TripPlanDto tripPlanDto, Member member){
 
-        System.out.println("▶ 입력된 도착지: " + tripPlanDto.getEndAddress());
-
         TripPlan tripPlan = TripPlan.builder()
                 .startAddress(tripPlanDto.getStartAddress())
                 .endAddress(tripPlanDto.getEndAddress())
@@ -40,8 +38,6 @@ public class TripService {
                 .build();
 
         String locationCode = weatherService.findBestCode(tripPlanDto.getEndAddress());
-
-        System.out.println("▶ 파싱된 locationCode: " + locationCode);
 
         LocationCodeMapping locationCodeMapping = LocationCodeMapping.builder()
                 .locationCode(locationCode)
@@ -81,6 +77,8 @@ public class TripService {
                 .departureTime(tripLegDto.getDepartureTime())
                 .arrivalTime(tripLegDto.getArrivalTime())
                 .build();
+
+        tripLeg.setTripPlan(tripPlan);
 
         tripPlan.getLegs().add(tripLeg);
 
