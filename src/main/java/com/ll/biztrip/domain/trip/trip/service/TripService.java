@@ -93,4 +93,12 @@ public class TripService {
                .toList();
 
     }
+
+    public List<TripPlanDto> getPlanDetail(Member member) {
+
+        return tripPlanRepository.findTripPlanByMember(member)
+                .stream()
+                .map(TripPlanDto::new)
+                .toList();
+    }
 }
