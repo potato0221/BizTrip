@@ -55,7 +55,7 @@ public class ApiV1TripController {
 
     @GetMapping("/planList")
     @Operation(summary = "등록된 플랜 리스트 조회")
-    public RsData<List<PlanListDto>> getPlans(){
+    public RsData<List<PlanListDto>> getPlanLists(){
 
         if(rq.getMember()==null){
             throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
@@ -64,5 +64,18 @@ public class ApiV1TripController {
         List<PlanListDto> planList = tripService.getPlanList(rq.getMember());
 
         return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), planList);
+    }
+
+    @GetMapping("getPlan")
+    @Operation(summary = "플랜 상세 정보")
+    public RsData<List<TripPlanDto>> getPlanDetail(){
+
+        if(rq.getMember()==null){
+            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
+        }
+
+        List<TripPlanDto> planDtos = tripService.getPlanDetail(rq.getMember());
+
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), planDtos);
     }
 }

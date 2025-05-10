@@ -191,7 +191,7 @@
 		{:else}
 			<div class="flex flex-1 flex-col items-center">
 				{#if rq.isLogin()}
-					<a href="/member/me">
+					<a href="/route">
 						<div class="flex items-center justify-center">
 							<div
 								class={isMypage
