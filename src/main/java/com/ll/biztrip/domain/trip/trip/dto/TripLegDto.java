@@ -16,6 +16,8 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 public class TripLegDto {
 
+    private Long id;
+
     private String transportType;
 
     private Long transportId;
@@ -30,6 +32,7 @@ public class TripLegDto {
 
 
     public TripLegDto(TripLeg tripLeg){
+        this.id = tripLeg.getId();
         this.transportType = tripLeg.getTransportType().name();
         this.transportId = tripLeg.getTransportId();
         this.departureName = tripLeg.getDepartureName();

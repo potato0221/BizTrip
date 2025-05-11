@@ -9,4 +9,6 @@ import java.util.List;
 public interface TripPlanRepository extends JpaRepository<TripPlan, Long> {
 
     List<TripPlan> findTripPlanByMember(Member member);
+
+    void deleteByIdAndMember(Long id, Member member);
 }
