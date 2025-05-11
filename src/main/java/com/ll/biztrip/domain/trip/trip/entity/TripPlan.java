@@ -22,11 +22,11 @@ import static lombok.AccessLevel.PROTECTED;
 public class TripPlan extends BaseEntity {
 
     @Convert(converter = AESAttributeConverter.class)
-    @Column(length = 100)
+    @Column(length = 254)
     private String startAddress;
 
     @Convert(converter = AESAttributeConverter.class)
-    @Column(length = 100)
+    @Column(length = 254)
     private String endAddress;
 
     @Column(length = 100)

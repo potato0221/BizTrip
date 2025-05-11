@@ -30,18 +30,20 @@
 		fetchWeather(id);
 	}
 
-	function emojiForSky(sky: string): string {
-		if (!sky) return '❓';
-		if (sky.includes('맑')) return '☀️';
-		if (sky.includes('구름')) return '⛅';
-		if (sky.includes('흐림')) return '☁️';
-		if (sky.includes('비')) return '🌧️';
-		if (sky.includes('눈')) return '🌨️';
-		return '❓';
+	function iconForSky(sky: string): string {
+		if (!sky) return 'fa-solid fa-question';
+		if (sky.includes('맑')) return 'fa-solid fa-sun text-[#f33f12]';
+		if (sky.includes('구름')) return 'fa-solid fa-cloud-sun text-[#FFD43B]';
+		if (sky.includes('흐림')) return 'fa-solid fa-cloud text-[#74C0FC]';
+		if (sky.includes('비')) return 'fa-solid fa-cloud-showers-heavy text-[#1264f3]';
+		if (sky.includes('눈')) return 'fa-solid fa-cloud-meatball text-[#29a2ff]';
+		return 'fa-solid fa-question';
 	}
 </script>
 
-<h1 class="text-xl font-bold mb-4">🌤️ 도착지 날씨 확인</h1>
+<h1 class="text-xl font-bold mb-4">
+	<i class="fa-solid fa-sun" style="color: #f33f12;"></i> 도착지 날씨 확인
+</h1>
 
 <PlanSelector {selectedPlanId} onSelectedPlanChange={handlePlanChange} />
 
@@ -53,8 +55,11 @@
 		{#each todayForecast as info}
 			<div class="min-w-[80px] text-center text-sm px-2">
 				<div class="text-xs text-gray-500">{info.time}</div>
-				<div class="text-2xl">{emojiForSky(info.sky)}</div>
-				<div class="text-xs">💧 {info.rainProb}%</div>
+				<div class="text-2xl"><i class={iconForSky(info.sky)}></i></div>
+				<div class="text-xs">
+					<i class="fa-solid fa-droplet mr-1" style="color: #86cafe;"></i>
+					{info.rainProb}%
+				</div>
 				<div class="text-sm font-semibold mt-1">{info.temperature}℃</div>
 			</div>
 		{/each}
@@ -68,5 +73,7 @@
 		{/each}
 	</div>
 {:else if selectedPlanId}
-	<p class="text-gray-500 mt-6">⏳ 날씨 정보를 불러오는 중...</p>
+	<p class="text-gray-500 mt-6">
+		<i class="fa-solid fa-hourglass-half"></i> 날씨 정보를 불러오는 중...
+	</p>
 {/if}
