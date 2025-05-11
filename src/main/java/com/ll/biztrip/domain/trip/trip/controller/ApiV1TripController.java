@@ -66,7 +66,7 @@ public class ApiV1TripController {
         return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), planList);
     }
 
-    @GetMapping("getPlan")
+    @GetMapping("/getPlan")
     @Operation(summary = "플랜 상세 정보")
     public RsData<List<TripPlanDto>> getPlanDetail(){
 
@@ -77,5 +77,28 @@ public class ApiV1TripController {
         List<TripPlanDto> planDtos = tripService.getPlanDetail(rq.getMember());
 
         return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), planDtos);
+    }
+
+    @DeleteMapping("/delete/plan/{planId}")
+    @Operation(summary = "내 플랜 삭제")
+    public RsData<Empty> deletePlan(
+            @PathVariable Long planId
+    ){
+
+        tripService.deletePlan(planId, rq.getMember());
+
+        return RsData.of(Msg.E200_3_DELETE_SUCCEED.getCode(), Msg.E200_3_DELETE_SUCCEED.getMsg());
+
+    }
+
+    @DeleteMapping("/delete/leg/{legId}")
+    @Operation(summary = "내 교통편 삭제")
+    public RsData<Empty> deleteLeg(
+            @PathVariable Long legId
+    ){
+
+        tripService.deleteLeg(legId, rq.getMember());
+
+        return RsData.of(Msg.E200_3_DELETE_SUCCEED.getCode(), Msg.E200_3_DELETE_SUCCEED.getMsg());
     }
 }

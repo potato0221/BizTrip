@@ -7,6 +7,7 @@ import com.ll.biztrip.domain.trip.trip.dto.TripLegDto;
 import com.ll.biztrip.domain.trip.trip.dto.TripPlanDto;
 import com.ll.biztrip.domain.trip.trip.entity.TripLeg;
 import com.ll.biztrip.domain.trip.trip.entity.TripPlan;
+import com.ll.biztrip.domain.trip.trip.repository.TripLegRepository;
 import com.ll.biztrip.domain.trip.trip.repository.TripPlanRepository;
 import com.ll.biztrip.domain.weather.weather.entity.LocationCodeMapping;
 import com.ll.biztrip.domain.weather.weather.service.WeatherService;
@@ -25,6 +26,7 @@ import java.util.List;
 public class TripService {
 
     private final TripPlanRepository tripPlanRepository;
+    private final TripLegRepository tripLegRepository;
     private final WeatherService weatherService;
 
     @Transactional
@@ -100,5 +102,17 @@ public class TripService {
                 .stream()
                 .map(TripPlanDto::new)
                 .toList();
+    }
+
+    @Transactional
+    public void deletePlan(Long planId, Member member) {
+
+        tripPlanRepository.deleteByIdAndMember(planId, member);
+    }
+
+    @Transactional
+    public void deleteLeg(Long legId, Member member) {
+
+        tripLegRepository.deleteByIdAndTripPlanMember(legId, member);
     }
 }

@@ -18,6 +18,8 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 public class TripPlanDto {
 
+    private Long id;
+
     private String startAddress;
 
     private String endAddress;
@@ -27,6 +29,7 @@ public class TripPlanDto {
     private List<TripLegDto> legs;
 
     public TripPlanDto(TripPlan tripPlan){
+        this.id = tripPlan.getId();
         this.startAddress = tripPlan.getStartAddress();
         this.endAddress = tripPlan.getEndAddress();
         this.planName = tripPlan.getPlanName();
