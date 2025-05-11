@@ -14,13 +14,13 @@ public class WeatherGridLocationRepositoryImpl implements CustomWeatherGridLocat
     QWeatherGridLocation location = QWeatherGridLocation.weatherGridLocation;
 
     @Override
-    public Optional<String> findBestLocationCode(String siDo, String siGunGu) {
-
+    public Optional<String> findBestLocationCode(String siDo, String siGunGu, String dong) {
         String code = queryFactory.select(location.locationCode)
                 .from(location)
                 .where(
                         location.siDo.startsWith(siDo),
-                        location.siGunGu.startsWith(siGunGu)
+                        location.siGunGu.startsWith(siGunGu),
+                        location.dong.startsWith(dong)
                 )
                 .fetchFirst();
 
@@ -29,12 +29,30 @@ public class WeatherGridLocationRepositoryImpl implements CustomWeatherGridLocat
                     .from(location)
                     .where(
                             location.siDo.startsWith(siDo),
-                            location.siGunGu.isNull()
+                            location.siGunGu.startsWith(siGunGu)
+                    )
+                    .fetchFirst();
+        }
+
+        if (code == null) {
+            code = queryFactory.select(location.locationCode)
+                    .from(location)
+                    .where(
+                            location.siDo.startsWith(siDo)
+                    )
+                    .fetchFirst();
+        }
+
+        if (code == null) {
+            code = queryFactory.select(location.locationCode)
+                    .from(location)
+                    .where(
+                            location.siGunGu.startsWith(siGunGu),
+                            location.dong.startsWith(dong)
                     )
                     .fetchFirst();
         }
 
         return Optional.ofNullable(code);
     }
-
 }

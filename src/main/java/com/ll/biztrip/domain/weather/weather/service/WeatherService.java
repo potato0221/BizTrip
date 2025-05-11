@@ -87,7 +87,7 @@ public class WeatherService {
         System.out.println("▶ 시군구: " + parsed.siGunGu());
 
         return weatherGridLocationRepository.
-                findBestLocationCode(parsed.siDo(), parsed.siGunGu())
+                findBestLocationCode(parsed.siDo(), parsed.siGunGu(), parsed.dong())
                 .orElse(null);
     }
 
