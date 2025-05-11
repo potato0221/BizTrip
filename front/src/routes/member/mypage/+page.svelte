@@ -193,7 +193,9 @@
 					}`}
 					on:click={() => togglePlan(plan.id)}
 				>
-					<div class="font-semibold">{plan.planName}</div>
+					<div class="font-semibold">
+						<i class="fa-solid fa-location-dot mr-1 text-blue-900"></i>{plan.planName}
+					</div>
 					<div class="text-sm text-gray-600 mt-1">
 						{beforeDash(plan.startAddress)} → {getPlaceName(
 							plan.legs[0]?.departureName ?? '',
