@@ -65,7 +65,9 @@
 		{/each}
 	</div>
 
-	<h2 class="mt-6 text-lg font-semibold">📅 날짜별 요약</h2>
+	<h2 class="mt-6 text-lg font-semibold">
+		<i class="fa-solid fa-calendar-days ml-2 mr-1 text-blue-900"></i> 날짜별 요약
+	</h2>
 
 	<div class="mt-2 space-y-2">
 		{#each dailySummary.slice(0, 5) as day}

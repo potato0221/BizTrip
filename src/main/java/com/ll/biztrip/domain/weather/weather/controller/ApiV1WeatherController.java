@@ -1,6 +1,7 @@
 package com.ll.biztrip.domain.weather.weather.controller;
 
 
+import com.ll.biztrip.domain.weather.weather.dto.WeatherInfoDto;
 import com.ll.biztrip.domain.weather.weather.dto.WeatherResponseDto;
 import com.ll.biztrip.domain.weather.weather.service.WeatherService;
 import com.ll.biztrip.global.enums.Msg;
@@ -10,6 +11,8 @@ import com.ll.biztrip.standard.base.Empty;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/weather")
@@ -41,6 +44,17 @@ public class ApiV1WeatherController {
         WeatherResponseDto weatherResponseDto = weatherService.getFormattedForecast(tripPlanId);
 
         return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), weatherResponseDto);
+    }
+
+    @GetMapping("/current")
+    @Operation(summary = "현재 위치 날씨 조회")
+    public RsData<List<WeatherInfoDto>> getCurrentWeather(
+            @RequestParam String address
+    ){
+
+        List<WeatherInfoDto> weatherInfoDtos = weatherService.getCurrentWeather(address);
+
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), weatherInfoDtos);
     }
 
 }

@@ -115,4 +115,12 @@ public class TripService {
 
         tripLegRepository.deleteByIdAndTripPlanMember(legId, member);
     }
+
+    public List<TripPlanDto> getTodayPlan() {
+
+        return tripPlanRepository.findTodayPlans()
+                .stream()
+                .map(TripPlanDto::new)
+                .toList();
+    }
 }
