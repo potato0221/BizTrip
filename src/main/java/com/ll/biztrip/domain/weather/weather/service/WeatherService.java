@@ -127,7 +127,7 @@ public class WeatherService {
             conn.disconnect();
 
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); // ✨ 버스 방식 맞춤
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
             JsonNode itemNode = objectMapper.readTree(sb.toString())
                     .path("response").path("body").path("items").path("item");
@@ -147,20 +147,31 @@ public class WeatherService {
     }
 
     public WeatherResponseDto getFormattedForecast(Long tripPlanId) {
-
         String locationCode = locationCodeMappingRepository.findByTripPlanId(tripPlanId).getLocationCode();
-
         WeatherGridLocation grid = weatherGridLocationRepository.findByLocationCode(locationCode);
-
         String localName = grid.getFullLocalName();
 
         List<WeatherDto> weatherDtos = getShortTermForecast(grid.getGridX(), grid.getGridY(), LocalDateTime.now());
+        Map<String, WeatherInfoDto> hourlyMap = toHourlyWeatherMap(weatherDtos, localName);
 
-        Map<String, WeatherInfoDto> hourlyMap = new TreeMap<>();
-        Map<String, List<WeatherInfoDto>> groupedByDate = new LinkedHashMap<>();
+        return WeatherResponseDto.builder()
+                .hourly(filterNext24Hours(hourlyMap))
+                .daily(toDailySummaries(hourlyMap))
+                .build();
+    }
 
-        LocalDate today = LocalDate.now();
-        LocalDate cutoff = today.plusDays(3);
+    public List<WeatherInfoDto> getCurrentWeather(String address) {
+        String locationCode = this.findBestCode(address);
+        WeatherGridLocation grid = weatherGridLocationRepository.findByLocationCode(locationCode);
+        List<WeatherDto> weatherDtos = getShortTermForecast(grid.getGridX(), grid.getGridY(), LocalDateTime.now());
+
+        Map<String, WeatherInfoDto> hourlyMap = toHourlyWeatherMap(weatherDtos, grid.getFullLocalName());
+        return new ArrayList<>(hourlyMap.values());
+    }
+
+    private Map<String, WeatherInfoDto> toHourlyWeatherMap(List<WeatherDto> weatherDtos, String localName) {
+        Map<String, WeatherInfoDto> map = new TreeMap<>();
+        LocalDate cutoff = LocalDate.now().plusDays(3);
 
         for (WeatherDto dto : weatherDtos) {
             String category = dto.getCategory();
@@ -172,7 +183,9 @@ public class WeatherService {
             String time = dto.getFcstTime().substring(0, 2) + ":00";
             String key = dto.getFcstDate() + dto.getFcstTime();
 
-            WeatherInfoDto info = hourlyMap.getOrDefault(key, new WeatherInfoDto(date.toString(), time, null, null, null, null, localName));
+            WeatherInfoDto info = map.getOrDefault(
+                    key, new WeatherInfoDto(date.toString(), time, null, null, null, null, localName)
+            );
 
             switch (category) {
                 case "SKY" -> info.setSky(WeatherCodeTranslator.translateSKY(dto.getFcstValue()));
@@ -181,15 +194,34 @@ public class WeatherService {
                 case "POP" -> info.setRainProb(dto.getFcstValue());
             }
 
-            hourlyMap.put(key, info);
+            map.put(key, info);
         }
 
+        return map;
+    }
+
+    private List<WeatherInfoDto> filterNext24Hours(Map<String, WeatherInfoDto> map) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime end = now.plusHours(24);
+
+        return map.values().stream()
+                .filter(info -> {
+                    LocalDateTime target = LocalDateTime.parse(info.getDate() + "T" + info.getTime());
+                    return !target.isBefore(now) && !target.isAfter(end);
+                })
+                .collect(Collectors.toList());
+    }
+
+    private List<DailySummaryDto> toDailySummaries(Map<String, WeatherInfoDto> hourlyMap) {
+        Map<String, List<WeatherInfoDto>> grouped = new LinkedHashMap<>();
         for (WeatherInfoDto info : hourlyMap.values()) {
-            groupedByDate.computeIfAbsent(info.getDate(), k -> new ArrayList<>()).add(info);
+            grouped.computeIfAbsent(info.getDate(), k -> new ArrayList<>()).add(info);
         }
 
-        List<DailySummaryDto> dailySummaries = new ArrayList<>();
-        for (Map.Entry<String, List<WeatherInfoDto>> entry : groupedByDate.entrySet()) {
+        LocalDate cutoff = LocalDate.now().plusDays(3);
+        List<DailySummaryDto> summaries = new ArrayList<>();
+
+        for (Map.Entry<String, List<WeatherInfoDto>> entry : grouped.entrySet()) {
             String date = entry.getKey();
             LocalDate localDate = LocalDate.parse(date);
             if (localDate.isAfter(cutoff)) continue;
@@ -200,43 +232,21 @@ public class WeatherService {
             String minTemp = infos.stream().map(WeatherInfoDto::getTemperature).filter(Objects::nonNull).min(String::compareTo).orElse("-");
             String rainProb = infos.stream().map(WeatherInfoDto::getRainProb).filter(Objects::nonNull).max(String::compareTo).orElse("-");
 
-            List<WeatherInfoDto> amList = infos.stream()
-                    .filter(i -> Integer.parseInt(i.getTime().substring(0, 2)) < 12)
-                    .toList();
-            List<WeatherInfoDto> pmList = infos.stream()
-                    .filter(i -> Integer.parseInt(i.getTime().substring(0, 2)) >= 12)
-                    .toList();
+            List<WeatherInfoDto> am = infos.stream().filter(i -> Integer.parseInt(i.getTime().substring(0, 2)) < 12).toList();
+            List<WeatherInfoDto> pm = infos.stream().filter(i -> Integer.parseInt(i.getTime().substring(0, 2)) >= 12).toList();
 
-            String amSky = amList.isEmpty() ? "-" : amList.get(0).getSky();
-            String pmSky = pmList.isEmpty() ? "-" : pmList.get(0).getSky();
-            String amPty = amList.isEmpty() ? "-" : amList.get(0).getPrecipitation();
-            String pmPty = pmList.isEmpty() ? "-" : pmList.get(0).getPrecipitation();
-
-            dailySummaries.add(DailySummaryDto.builder()
+            summaries.add(DailySummaryDto.builder()
                     .date(date)
-                    .amSky(amSky)
-                    .pmSky(pmSky)
-                    .amPrecipitation(amPty)
-                    .pmPrecipitation(pmPty)
+                    .amSky(am.isEmpty() ? "-" : am.get(0).getSky())
+                    .pmSky(pm.isEmpty() ? "-" : pm.get(0).getSky())
+                    .amPrecipitation(am.isEmpty() ? "-" : am.get(0).getPrecipitation())
+                    .pmPrecipitation(pm.isEmpty() ? "-" : pm.get(0).getPrecipitation())
                     .rainProb(rainProb)
                     .maxTemp(maxTemp)
                     .minTemp(minTemp)
                     .build());
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime end = now.plusHours(24);
-
-        List<WeatherInfoDto> hourly = hourlyMap.values().stream()
-                .filter(info -> {
-                    LocalDateTime target = LocalDateTime.parse(info.getDate() + "T" + info.getTime());
-                    return !target.isBefore(now) && !target.isAfter(end);
-                })
-                .collect(Collectors.toList());
-
-        return WeatherResponseDto.builder()
-                .hourly(hourly)
-                .daily(dailySummaries)
-                .build();
+        return summaries;
     }
 }

@@ -101,4 +101,13 @@ public class ApiV1TripController {
 
         return RsData.of(Msg.E200_3_DELETE_SUCCEED.getCode(), Msg.E200_3_DELETE_SUCCEED.getMsg());
     }
+
+    @GetMapping("/today")
+    @Operation(summary = "오늘의 출장")
+    public RsData<List<TripPlanDto>> getTodayPlan(){
+
+        List<TripPlanDto> tripPlanDtos = tripService.getTodayPlan();
+
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), tripPlanDtos);
+    }
 }
