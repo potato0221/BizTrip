@@ -19,7 +19,7 @@
 
 	function getPlaceName(name: string, type: string): string {
 		name = name.replace(/\([^)]*\)/g, '');
-		const suffix = type === 'flight' ? '공항' : type === 'train' ? '역' : '고속버스터미널';
+		const suffix = type === 'FLIGHT' ? '공항' : type === 'TRAIN' ? '역' : '고속버스터미널';
 		return name.trim() + suffix;
 	}
 
@@ -42,7 +42,7 @@
 	}
 </script>
 
-<h1 class="text-xl font-bold mb-4">🧭 경로 보기</h1>
+<h1 class="text-xl font-bold mb-4"><i class="fa-solid fa-compass text-blue-900"></i> 경로 보기</h1>
 
 {#if tripPlans.length > 0}
 	<ul class="space-y-2 mb-6">
@@ -70,7 +70,9 @@
 
 {#if routeUrlStart}
 	<div class="mt-6">
-		<h2 class="text-lg font-semibold">🗺️ 출발지 → 교통편 위치</h2>
+		<h2 class="text-lg font-semibold">
+			<i class="fa-solid fa-map text-blue-900 ml-1"></i> 출발지 → 교통편 위치
+		</h2>
 		<iframe
 			src={routeUrlStart}
 			width="100%"
@@ -78,15 +80,23 @@
 			class="border rounded mt-2"
 			allowfullscreen
 		></iframe>
-		<div class="text-xs text-gray-500 mt-1">⚠️ 자세한 경로는 카카오맵 앱에서 확인됩니다.</div>
+		<div class="text-xs text-gray-500 mt-1">
+			<i class="fa-solid fa-triangle-exclamation ml-1" style="color: #FFD43B;"></i> 자세한 경로는 카카오맵
+			앱에서 확인됩니다.
+		</div>
 	</div>
 {/if}
 
 {#if routeUrlEnd}
 	<div class="mt-6">
-		<h2 class="text-lg font-semibold">🗺️ 교통편 → 도착지</h2>
+		<h2 class="text-lg font-semibold">
+			<i class="fa-solid fa-map text-blue-900 ml-1"></i> 교통편 → 도착지
+		</h2>
 		<iframe src={routeUrlEnd} width="100%" height="400" class="border rounded mt-2" allowfullscreen
 		></iframe>
-		<div class="text-xs text-gray-500 mt-1">⚠️ 자세한 경로는 카카오맵 앱에서 확인됩니다.</div>
+		<div class="text-xs text-gray-500 mt-1">
+			<i class="fa-solid fa-triangle-exclamation ml-1" style="color: #FFD43B;"></i> 자세한 경로는 카카오맵
+			앱에서 확인됩니다.
+		</div>
 	</div>
 {/if}

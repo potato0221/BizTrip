@@ -21,7 +21,7 @@
 
 	function getPlaceName(name: string, type: string): string {
 		name = name.replace(/\([^)]*\)/g, '');
-		const suffix = type === 'flight' ? '공항' : type === 'train' ? '역' : '고속버스터미널';
+		const suffix = type === 'FLIGHT' ? '공항' : type === 'TRAIN' ? '역' : '고속버스터미널';
 		return name.trim() + suffix;
 	}
 
@@ -31,9 +31,9 @@
 	}
 
 	function getIconClass(type: string): string {
-		return type === 'flight'
+		return type === 'FLIGHT'
 			? 'fa-solid fa-plane-departure'
-			: type === 'train'
+			: type === 'TRAIN'
 				? 'fa-solid fa-train'
 				: 'fa-solid fa-bus';
 	}
@@ -88,6 +88,14 @@
 		const { data, error } = await rq.apiEndPoints().GET('/api/v1/trip/getPlan');
 		if (!error) {
 			tripPlans = data?.data ?? [];
+
+			tripPlans.forEach((plan) => {
+				const leg = plan.legs?.[0];
+				console.log('플랜:', plan.planName);
+				console.log('출발지:', leg?.departureName);
+				console.log('도착지:', leg?.arrivalName);
+				console.log('타입:', leg?.transportType);
+			});
 		} else {
 			toastr.error(error.msg);
 		}
@@ -124,6 +132,11 @@
 		} else {
 			toastr.error('삭제 실패');
 		}
+	}
+
+	function formatDateOnly(dt: string | Date): string {
+		const d = new Date(dt);
+		return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
 	}
 </script>
 
@@ -185,6 +198,8 @@
 	{#if tripPlans.length > 0}
 		<ul class="space-y-2 mb-6">
 			{#each tripPlans as plan (plan.id)}
+				{@const leg = plan.legs?.[0]}
+
 				<li
 					class={`p-3 rounded cursor-pointer transition-colors duration-300 ${
 						selectedPlanId === plan.id
@@ -193,18 +208,30 @@
 					}`}
 					on:click={() => togglePlan(plan.id)}
 				>
-					<div class="font-semibold">
-						<i class="fa-solid fa-location-dot mr-1 text-blue-900"></i>{plan.planName}
+					<!-- 제목 + 날짜 -->
+					<div class="font-semibold flex items-center justify-between">
+						<div class="flex items-center">
+							<i class="fa-solid fa-location-dot mr-1 text-blue-900"></i>
+							{plan.planName}
+						</div>
+						{#if leg?.departureTime}
+							<span class="text-sm text-gray-500 ml-2">
+								{formatDateOnly(leg.departureTime)}
+							</span>
+						{/if}
 					</div>
+
+					<!-- 출발지 → 도착지 -->
 					<div class="text-sm text-gray-600 mt-1">
-						{beforeDash(plan.startAddress)} → {getPlaceName(
-							plan.legs[0]?.departureName ?? '',
-							plan.legs[0]?.transportType ?? ''
-						)}<br />
-						{getPlaceName(plan.legs[0]?.arrivalName ?? '', plan.legs[0]?.transportType ?? '')} → {beforeDash(
-							plan.endAddress
-						)}
+						{beforeDash(plan.startAddress)} →
+						{#if leg}
+							{getPlaceName(leg.departureName, leg.transportType)}<br />
+							{getPlaceName(leg.arrivalName, leg.transportType)} →
+						{/if}
+						{beforeDash(plan.endAddress)}
 					</div>
+
+					<!-- 삭제 버튼 -->
 					{#if selectedPlanId === plan.id}
 						<div in:fly={{ y: 10, duration: 200 }}>
 							<div class="flex justify-end">
