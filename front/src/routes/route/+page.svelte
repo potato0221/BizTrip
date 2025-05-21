@@ -40,6 +40,15 @@
 			routeUrlEnd = `https://map.kakao.com/?sName=${encodeURIComponent(fromEnd)}&eName=${encodeURIComponent(toEnd)}`;
 		}
 	}
+
+	function beforeDash(text: string): string {
+		return text.split(' - ')[0].trim();
+	}
+
+	function formatDateOnly(dt: string | Date): string {
+		const d = new Date(dt);
+		return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
+	}
 </script>
 
 <h1 class="text-xl font-bold mb-4"><i class="fa-solid fa-compass text-blue-900"></i> 경로 보기</h1>
@@ -47,19 +56,30 @@
 {#if tripPlans.length > 0}
 	<ul class="space-y-2 mb-6">
 		{#each tripPlans as plan}
+			{@const leg = plan.legs?.[0]}
 			<li
 				class="border p-3 rounded hover:bg-blue-50 cursor-pointer"
 				on:click={() => handlePlanSelect(plan)}
 			>
-				<div class="font-semibold">{plan.planName}</div>
+				<div class="font-semibold flex items-center justify-between">
+					<div class="flex items-center">
+						<i class="fa-solid fa-location-dot mr-1 text-blue-900"></i>
+						{plan.planName}
+					</div>
+					{#if leg?.departureTime}
+						<span class="text-sm text-gray-500 ml-2">
+							{formatDateOnly(leg.departureTime)}
+						</span>
+					{/if}
+				</div>
+
 				<div class="text-sm text-gray-500">
-					{plan.startAddress.split(' - ')[0]} → {getPlaceName(
-						plan.legs[0]?.departureName ?? '',
-						plan.legs[0]?.transportType ?? ''
-					)}<br />
-					{getPlaceName(plan.legs[0]?.arrivalName ?? '', plan.legs[0]?.transportType ?? '')} → {plan.endAddress.split(
-						' - '
-					)[0]}
+					{beforeDash(plan.startAddress)} →
+					{#if leg}
+						{getPlaceName(leg.departureName, leg.transportType)}<br />
+						{getPlaceName(leg.arrivalName, leg.transportType)} →
+					{/if}
+					{beforeDash(plan.endAddress)}
 				</div>
 			</li>
 		{/each}
@@ -67,7 +87,6 @@
 {:else}
 	<p class="text-gray-500">등록된 플랜이 없습니다.</p>
 {/if}
-
 {#if routeUrlStart}
 	<div class="mt-6">
 		<h2 class="text-lg font-semibold">
