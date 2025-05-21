@@ -116,6 +116,7 @@
 					</div>
 				{/each}
 			</div>
+			<div class="flex justify-end text-sm mt-2">출처 : 기상청</div>
 		{/if}
 	</div>
 </div>

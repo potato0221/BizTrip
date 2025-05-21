@@ -79,3 +79,4 @@
 		<i class="fa-solid fa-hourglass-half"></i> 날씨 정보를 불러오는 중...
 	</p>
 {/if}
+<div class="flex justify-end text-sm mt-2">출처 : 기상청</div>
