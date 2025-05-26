@@ -25,12 +25,12 @@
 	});
 
 	async function loadStations() {
-		const { data } = await rq.apiEndPoints().GET('/api/v1/travel/train/stationList');
+		const { data } = await rq.apiEndPoints().GET('/api/v1/transport/train/stationList');
 		stationList = data?.data ?? [];
 	}
 
 	async function loadTrainTypes() {
-		const { data } = await rq.apiEndPoints().GET('/api/v1/travel/train/trainType');
+		const { data } = await rq.apiEndPoints().GET('/api/v1/transport/train/trainType');
 		trainTypes = data?.data ?? [];
 	}
 
@@ -81,7 +81,7 @@
 			return;
 		}
 
-		const { data } = await rq.apiEndPoints().GET('/api/v1/travel/train/schedule', {
+		const { data } = await rq.apiEndPoints().GET('/api/v1/transport/train/schedule', {
 			params: {
 				query: {
 					departureStationId: departureStation.stationId,
@@ -103,7 +103,7 @@
 	async function registerSchedule() {
 		const selected = trainSchedules[selectedIndex!];
 
-		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/train/register', {
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/transport/train/register', {
 			body: {
 				departureTime: toISO(selected.depplandtime),
 				arrivalTime: toISO(selected.arrplandtime),

@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/travel/train")
+@RequestMapping("/api/v1/transport/train")
 @RequiredArgsConstructor
 public class ApiV1TrainController {
 

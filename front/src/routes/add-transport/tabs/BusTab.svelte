@@ -23,7 +23,7 @@
 
 	async function loadBusTerminals() {
 		loading = true;
-		const { data } = await rq.apiEndPoints().GET('/api/v1/travel/bus/terminalList');
+		const { data } = await rq.apiEndPoints().GET('/api/v1/transport/bus/terminalList');
 		terminalList = data?.data ?? [];
 		loading = false;
 	}
@@ -82,7 +82,7 @@
 			return;
 		}
 
-		const { data } = await rq.apiEndPoints().GET('/api/v1/travel/bus/schedule', {
+		const { data } = await rq.apiEndPoints().GET('/api/v1/transport/bus/schedule', {
 			params: {
 				query: {
 					departureTerminalId: departureTerminal.terminalId,
@@ -108,7 +108,7 @@
 			return;
 		}
 
-		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/bus/register', {
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/transport/bus/register', {
 			body: {
 				departureName: formatTerminalLabel(
 					departureTerminal.terminalName,

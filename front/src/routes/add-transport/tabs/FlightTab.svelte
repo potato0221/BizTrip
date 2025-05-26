@@ -28,12 +28,12 @@
 	});
 
 	async function loadAirports() {
-		const { data } = await rq.apiEndPoints().GET('/api/v1/travel/flight/airport');
+		const { data } = await rq.apiEndPoints().GET('/api/v1/transport/flight/airport');
 		airportList = data?.data ?? [];
 	}
 
 	async function loadAirlines() {
-		const { data } = await rq.apiEndPoints().GET('/api/v1/travel/flight/airline');
+		const { data } = await rq.apiEndPoints().GET('/api/v1/transport/flight/airline');
 		airlineList = data?.data ?? [];
 	}
 
@@ -88,7 +88,7 @@
 			return;
 		}
 
-		const { data } = await rq.apiEndPoints().GET('/api/v1/travel/flight/schedule', {
+		const { data } = await rq.apiEndPoints().GET('/api/v1/transport/flight/schedule', {
 			params: {
 				query: {
 					departureAirportId: dep.airportId,
@@ -109,7 +109,7 @@
 		if (selectedIndex === null) return;
 		const selected = schedules[selectedIndex];
 
-		const { data, error } = await rq.apiEndPoints().POST('/api/v1/travel/flight/register', {
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/transport/flight/register', {
 			body: {
 				departureName: selected.depAirportNm,
 				arrivalName: selected.arrAirportNm,
