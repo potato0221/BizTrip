@@ -44,14 +44,14 @@
 
 	function getPlaceName(name: string, type: string): string {
 		name = name.replace(/\([^)]*\)/g, '');
-		const suffix = type === 'flight' ? '공항' : type === 'train' ? '역' : '고속버스터미널';
+		const suffix = type === 'FLIGHT' ? '공항' : type === 'TRAIN' ? '역' : '고속버스터미널';
 		return name.trim() + suffix;
 	}
 
 	function getIconClass(type: string): string {
-		return type === 'flight'
+		return type === 'FLIGHT'
 			? 'fa-solid fa-plane-departure'
-			: type === 'train'
+			: type === 'TRAIN'
 				? 'fa-solid fa-train'
 				: 'fa-solid fa-bus';
 	}
@@ -116,6 +116,7 @@
 					</div>
 				{/each}
 			</div>
+			<div class="flex justify-end text-sm mt-2">출처 : 기상청</div>
 		{/if}
 	</div>
 </div>
