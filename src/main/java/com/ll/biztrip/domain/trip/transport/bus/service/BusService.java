@@ -192,9 +192,9 @@ public class BusService {
     @Transactional
     public void addBusSchedule(BusRegisterDto busRegisterDto, Member member){
 
-        if(busRepository.existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTime(
+        if(busRepository.existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTimeAndBusGrade(
                 member, busRegisterDto.getDepartureName(), busRegisterDto.getArrivalName(),
-                busRegisterDto.getDepartureTime(), busRegisterDto.getArrivalTime()
+                busRegisterDto.getDepartureTime(), busRegisterDto.getArrivalTime(), busRegisterDto.getBusGrade()
         )){
             throw new GlobalException(
                     Msg.E400_1_ALREADY_REGISTERED_BUS.getCode(),

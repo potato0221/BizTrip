@@ -9,12 +9,13 @@ import java.util.List;
 
 public interface TrainRepository extends JpaRepository<Train, Long> {
 
-    boolean existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTime(
+    boolean existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTimeAndTrainType(
             Member member,
             String departureName,
             String arrivalName,
             LocalDateTime departureTime,
-            LocalDateTime arrivalTime
+            LocalDateTime arrivalTime,
+            String trainType
     );
 
     List<Train> findTrainByMember(Member member);

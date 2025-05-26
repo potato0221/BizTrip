@@ -396,9 +396,9 @@ public class TrainService {
     @Transactional
     public void addTrainSchedule(TrainRegisterDto trainRegisterDto, Member member){
 
-        if(trainRepository.existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTime(
+        if(trainRepository.existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTimeAndTrainType(
                 member, trainRegisterDto.getDepartureName(), trainRegisterDto.getArrivalName(),
-                trainRegisterDto.getDepartureTime(), trainRegisterDto.getArrivalTime()
+                trainRegisterDto.getDepartureTime(), trainRegisterDto.getArrivalTime(), trainRegisterDto.getTrainType()
         )){
             throw new GlobalException(
                     Msg.E400_2_ALREADY_REGISTERED_TRAIN.getCode(),
