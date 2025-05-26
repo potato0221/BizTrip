@@ -12,6 +12,7 @@ import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class ApiV1TripController {
     @PostMapping("/addTripPlan")
     @Operation(summary = "여행 계획 추가")
     @PreAuthorize("isAuthenticated()")
-    public RsData<Empty> addTripPlan(@RequestBody TripPlanDto tripPlanDto){
+    public RsData<Empty> addTripPlan(@Valid @RequestBody TripPlanDto tripPlanDto){
 
         Member member = rq.getMember();
 
@@ -44,7 +45,7 @@ public class ApiV1TripController {
     @PreAuthorize("isAuthenticated()")
     public RsData<TripPlanDto> addTripLeg(
             @PathVariable Long tripPlanId,
-            @RequestBody TripLegDto tripLegDto){
+            @Valid @RequestBody TripLegDto tripLegDto){
 
         TripPlan updatedPlan = tripService.addLeg(tripPlanId, tripLegDto);
 

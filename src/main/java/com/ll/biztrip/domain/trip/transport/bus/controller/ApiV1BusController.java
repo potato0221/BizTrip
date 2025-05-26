@@ -12,6 +12,7 @@ import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -70,7 +71,7 @@ public class ApiV1BusController {
     @Operation(summary = "내가 탑승 할 버스 등록")
     @PreAuthorize("isAuthenticated()")
     public RsData<Empty> addMyBusSchedule(
-            @RequestBody BusRegisterDto busRegisterDto
+            @Valid @RequestBody BusRegisterDto busRegisterDto
     ){
 
         Member member = rq.getMember();

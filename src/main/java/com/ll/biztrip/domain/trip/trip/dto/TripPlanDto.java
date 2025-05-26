@@ -2,6 +2,8 @@ package com.ll.biztrip.domain.trip.trip.dto;
 
 
 import com.ll.biztrip.domain.trip.trip.entity.TripPlan;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,12 +22,16 @@ public class TripPlanDto {
 
     private Long id;
 
+    @NotBlank
     private String startAddress;
 
+    @NotBlank
     private String endAddress;
 
+    @NotBlank
     private String planName;
 
+    @Valid
     private List<TripLegDto> legs;
 
     public TripPlanDto(TripPlan tripPlan){
