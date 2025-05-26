@@ -8,12 +8,12 @@ import com.ll.biztrip.domain.trip.trip.dto.TripPlanDto;
 import com.ll.biztrip.domain.trip.trip.entity.TripPlan;
 import com.ll.biztrip.domain.trip.trip.service.TripService;
 import com.ll.biztrip.global.enums.Msg;
-import com.ll.biztrip.global.exceptions.GlobalException;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,13 +28,11 @@ public class ApiV1TripController {
 
     @PostMapping("/addTripPlan")
     @Operation(summary = "여행 계획 추가")
+    @PreAuthorize("isAuthenticated()")
     public RsData<Empty> addTripPlan(@RequestBody TripPlanDto tripPlanDto){
 
-        if(rq.getMember()==null){
-            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
-        }
-
         Member member = rq.getMember();
+
         tripService.addTripPlan(tripPlanDto, member);
 
         return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
@@ -43,6 +41,7 @@ public class ApiV1TripController {
 
     @PostMapping("/{tripPlanId}/addLeg")
     @Operation(summary = "여행 계획에 탑승 할 교통수단 추가")
+    @PreAuthorize("isAuthenticated()")
     public RsData<TripPlanDto> addTripLeg(
             @PathVariable Long tripPlanId,
             @RequestBody TripLegDto tripLegDto){
@@ -55,11 +54,8 @@ public class ApiV1TripController {
 
     @GetMapping("/planList")
     @Operation(summary = "등록된 플랜 리스트 조회")
+    @PreAuthorize("isAuthenticated()")
     public RsData<List<PlanListDto>> getPlanLists(){
-
-        if(rq.getMember()==null){
-            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
-        }
 
         List<PlanListDto> planList = tripService.getPlanList(rq.getMember());
 
@@ -68,11 +64,8 @@ public class ApiV1TripController {
 
     @GetMapping("/getPlan")
     @Operation(summary = "플랜 상세 정보")
+    @PreAuthorize("isAuthenticated()")
     public RsData<List<TripPlanDto>> getPlanDetail(){
-
-        if(rq.getMember()==null){
-            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
-        }
 
         List<TripPlanDto> planDtos = tripService.getPlanDetail(rq.getMember());
 
@@ -81,6 +74,7 @@ public class ApiV1TripController {
 
     @DeleteMapping("/delete/plan/{planId}")
     @Operation(summary = "내 플랜 삭제")
+    @PreAuthorize("isAuthenticated()")
     public RsData<Empty> deletePlan(
             @PathVariable Long planId
     ){
@@ -93,6 +87,7 @@ public class ApiV1TripController {
 
     @DeleteMapping("/delete/leg/{legId}")
     @Operation(summary = "내 교통편 삭제")
+    @PreAuthorize("isAuthenticated()")
     public RsData<Empty> deleteLeg(
             @PathVariable Long legId
     ){
@@ -104,6 +99,7 @@ public class ApiV1TripController {
 
     @GetMapping("/today")
     @Operation(summary = "오늘의 출장")
+    @PreAuthorize("isAuthenticated()")
     public RsData<List<TripPlanDto>> getTodayPlan(){
 
         List<TripPlanDto> tripPlanDtos = tripService.getTodayPlan();

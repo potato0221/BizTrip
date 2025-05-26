@@ -5,6 +5,7 @@ import com.ll.biztrip.domain.member.member.dto.NicknameDto;
 import com.ll.biztrip.domain.member.member.entity.Member;
 import com.ll.biztrip.domain.member.member.service.MemberService;
 import com.ll.biztrip.global.enums.Msg;
+import com.ll.biztrip.global.exceptions.GlobalException;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;
@@ -72,6 +73,10 @@ public class ApiV1MemberController {
     @PutMapping("/modifyNickName")
     @Operation(summary = "닉네임 변경")
     public RsData<NicknameDto> modifyNickName(@RequestBody NicknameDto nicknameDto){
+
+        if(rq.getMember()==null){
+            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
+        }
 
         Member member = memberService.modifyNickname(nicknameDto);
 

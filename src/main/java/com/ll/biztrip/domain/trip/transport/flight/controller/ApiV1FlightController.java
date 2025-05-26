@@ -5,12 +5,12 @@ import com.ll.biztrip.domain.member.member.entity.Member;
 import com.ll.biztrip.domain.trip.transport.flight.dto.*;
 import com.ll.biztrip.domain.trip.transport.flight.service.FlightService;
 import com.ll.biztrip.global.enums.Msg;
-import com.ll.biztrip.global.exceptions.GlobalException;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -27,12 +27,8 @@ public class ApiV1FlightController {
 
     @PostMapping("/addAirport")
     @Operation(summary = "공항 등록")
+    @PreAuthorize("hasRole('ADMIN')")
     public RsData<Empty> addAirports() {
-
-        if(!rq.isAdmin()){
-            System.out.println("권한 부족");
-            return RsData.of(Msg.E403_0_FORBIDDEN.getCode(),Msg.E403_0_FORBIDDEN.getMsg());
-        }
 
         flightService.updateAirport();
 
@@ -41,12 +37,8 @@ public class ApiV1FlightController {
 
     @PostMapping("/addAirline")
     @Operation(summary = "항공사 등록")
+    @PreAuthorize("hasRole('ADMIN')")
     public RsData<Empty> addAirlines() {
-
-        if(!rq.isAdmin()){
-            System.out.println("권한 부족");
-            return RsData.of(Msg.E403_0_FORBIDDEN.getCode(),Msg.E403_0_FORBIDDEN.getMsg());
-        }
 
         flightService.updateAirline();
 
@@ -55,6 +47,7 @@ public class ApiV1FlightController {
 
     @GetMapping("/airline")
     @Operation(summary = "항공사 리스트 조회")
+    @PreAuthorize("isAuthenticated()")
     public RsData<List<AirlineDto>> getAirline(){
 
         List<AirlineDto> requestDtos = flightService.getAirlines();
@@ -64,6 +57,7 @@ public class ApiV1FlightController {
 
     @GetMapping("/airport")
     @Operation(summary = "공항 리스트 조회")
+    @PreAuthorize("isAuthenticated()")
     public RsData<List<AirportDto>> getAirport(){
 
         List<AirportDto> requestDtos = flightService.getAirports();
@@ -73,6 +67,7 @@ public class ApiV1FlightController {
 
     @GetMapping("/schedule")
     @Operation(summary = "날짜, 출발지, 도착지 별 항공편 조회")
+    @PreAuthorize("isAuthenticated()")
     public RsData<List<FlightScheduleDto>> getFlightSchedule(
             @RequestParam String departureAirportId,
             @RequestParam String arrivalAirportId,
@@ -88,26 +83,22 @@ public class ApiV1FlightController {
 
     @PostMapping("/register")
     @Operation(summary = "내가 탑승 할 항공편 등록")
+    @PreAuthorize("isAuthenticated()")
     public RsData<Empty> addMyFlightSchedule(
             @RequestBody FlightRegisterDto flightRegisterDto
     ){
-        if(rq.getMember()==null){
-            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
-        }else{
-            Member member = rq.getMember();
-            flightService.addFlightSchedule(flightRegisterDto, member);
-        }
+
+        Member member = rq.getMember();
+
+        flightService.addFlightSchedule(flightRegisterDto, member);
 
         return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
     }
 
     @GetMapping("/myList")
     @Operation(summary = "내가 탈 항공편 리스트")
+    @PreAuthorize("isAuthenticated()")
     public RsData<List<FlightDto>> getMyBuses(){
-
-        if(rq.getMember()==null){
-            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
-        }
 
         List<FlightDto> flightDtos = flightService.getMyFlights(rq.getMember());
 

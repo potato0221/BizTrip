@@ -10,6 +10,7 @@ import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,11 +25,8 @@ public class ApiV1WeatherController {
 
     @PostMapping("/location")
     @Operation(summary = "위치 정보 저장")
+    @PreAuthorize("hasRole('ADMIN')")
     public RsData<Empty> addLocations(){
-
-        if(!rq.isAdmin()){
-            return RsData.of(Msg.E403_0_FORBIDDEN.getCode(),Msg.E403_0_FORBIDDEN.getMsg());
-        }
 
         weatherService.loadFromCsv();
 
@@ -37,6 +35,7 @@ public class ApiV1WeatherController {
 
     @GetMapping("/trip")
     @Operation(summary = "trip 도착지 별 날씨 조회")
+    @PreAuthorize("isAuthenticated()")
     public RsData<WeatherResponseDto> getWeatherByTrip(
             @RequestParam Long tripPlanId
     ){
@@ -48,6 +47,7 @@ public class ApiV1WeatherController {
 
     @GetMapping("/current")
     @Operation(summary = "현재 위치 날씨 조회")
+    @PreAuthorize("isAuthenticated()")
     public RsData<List<WeatherInfoDto>> getCurrentWeather(
             @RequestParam String address
     ){

@@ -5,12 +5,12 @@ import com.ll.biztrip.domain.member.member.entity.Member;
 import com.ll.biztrip.domain.trip.transport.train.dto.*;
 import com.ll.biztrip.domain.trip.transport.train.service.TrainService;
 import com.ll.biztrip.global.enums.Msg;
-import com.ll.biztrip.global.exceptions.GlobalException;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -27,12 +27,8 @@ public class ApiV1TrainController {
 
     @PostMapping("/addCity")
     @Operation(summary = "기차 도시 등록")
+    @PreAuthorize("hasRole('ADMIN')")
     public RsData<Empty> addCities() {
-
-        if(!rq.isAdmin()){
-            System.out.println("권한 부족");
-            return RsData.of(Msg.E403_0_FORBIDDEN.getCode(),Msg.E403_0_FORBIDDEN.getMsg());
-        }
 
         trainService.updateKtxCity();
 
@@ -41,12 +37,8 @@ public class ApiV1TrainController {
 
     @PostMapping("/addTrainType")
     @Operation(summary = "기차 종류 등록")
+    @PreAuthorize("hasRole('ADMIN')")
     public RsData<Empty> addTrainType() {
-
-        if(!rq.isAdmin()){
-            System.out.println("권한 부족");
-            return RsData.of(Msg.E403_0_FORBIDDEN.getCode(),Msg.E403_0_FORBIDDEN.getMsg());
-        }
 
         trainService.updateTrainType();
 
@@ -55,12 +47,8 @@ public class ApiV1TrainController {
 
     @PostMapping("/addStation")
     @Operation(summary = "기차역 등록")
+    @PreAuthorize("hasRole('ADMIN')")
     public RsData<Empty> addStations() {
-
-        if(!rq.isAdmin()){
-            System.out.println("권한 부족");
-            return RsData.of(Msg.E403_0_FORBIDDEN.getCode(),Msg.E403_0_FORBIDDEN.getMsg());
-        }
 
         trainService.updateStation();
 
@@ -69,6 +57,7 @@ public class ApiV1TrainController {
 
     @GetMapping("/trainType")
     @Operation(summary = "기차 종류 조회")
+    @PreAuthorize("isAuthenticated()")
     public RsData<List<TrainTypeDto>> getTrainType(){
 
         List<TrainTypeDto> requestDtos = trainService.getTrainTypes();
@@ -78,6 +67,7 @@ public class ApiV1TrainController {
 
     @GetMapping("/stationList")
     @Operation(summary = "기차역 리스트 조회")
+    @PreAuthorize("isAuthenticated()")
     public RsData<List<StationDto>> getStations(){
 
         List<StationDto> requestDtos = trainService.getStations();
@@ -87,6 +77,7 @@ public class ApiV1TrainController {
 
     @GetMapping("/schedule")
     @Operation(summary = "날짜, 출발지, 도착지 별 기차 조회")
+    @PreAuthorize("isAuthenticated()")
     public RsData<List<TrainScheduleDto>> getBusSchedule(
             @RequestParam String departureStationId,
             @RequestParam String arrivalStationId,
@@ -102,26 +93,22 @@ public class ApiV1TrainController {
 
     @PostMapping("/register")
     @Operation(summary = "내가 탑승 할 기차 등록")
+    @PreAuthorize("isAuthenticated()")
     public RsData<Empty> addMyTrainSchedule(
             @RequestBody TrainRegisterDto trainRegisterDto
     ){
-        if(rq.getMember()==null){
-            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
-        }else{
-            Member member = rq.getMember();
-            trainService.addTrainSchedule(trainRegisterDto, member);
-        }
+
+        Member member = rq.getMember();
+
+        trainService.addTrainSchedule(trainRegisterDto, member);
 
         return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
     }
 
     @GetMapping("/myList")
     @Operation(summary = "내가 탈 기차 리스트")
+    @PreAuthorize("isAuthenticated()")
     public RsData<List<TrainDto>> getMyBuses(){
-
-        if(rq.getMember()==null){
-            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
-        }
 
         List<TrainDto> trainDtos = trainService.getMyTrains(rq.getMember());
 
