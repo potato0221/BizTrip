@@ -5,7 +5,7 @@
 	let myData: components['schemas']['MemberDto'][] = [];
 
 	const addCity = async () => {
-		const { data, error } = await rq.apiEndPoints().POST('/api/v1/transport/train/addCity');
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/admin/addCity');
 
 		if (data) {
 			if (data.resultCode === '200-0') {
@@ -19,7 +19,7 @@
 	};
 
 	const addStation = async () => {
-		const { data, error } = await rq.apiEndPoints().POST('/api/v1/transport/train/addStation');
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/admin/addStation');
 
 		if (data) {
 			if (data.resultCode === '200-0') {
@@ -33,7 +33,7 @@
 	};
 
 	const addTrainType = async () => {
-		const { data, error } = await rq.apiEndPoints().POST('/api/v1/transport/train/addTrainType');
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/admin/addTrainType');
 
 		if (data) {
 			if (data.resultCode === '200-0') {
@@ -47,7 +47,7 @@
 	};
 
 	const addAirport = async () => {
-		const { data, error } = await rq.apiEndPoints().POST('/api/v1/transport/flight/addAirport');
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/admin/addAirport');
 
 		if (data) {
 			if (data.resultCode === '200-0') {
@@ -61,7 +61,7 @@
 	};
 
 	const addAirline = async () => {
-		const { data, error } = await rq.apiEndPoints().POST('/api/v1/transport/flight/addAirline');
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/admin/addAirline');
 
 		if (data) {
 			if (data.resultCode === '200-0') {
@@ -75,7 +75,7 @@
 	};
 
 	const addTerminal = async () => {
-		const { data, error } = await rq.apiEndPoints().POST('/api/v1/transport/bus/addTerminal');
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/admin/addTerminal');
 
 		if (data) {
 			if (data.resultCode === '200-0') {
@@ -89,7 +89,7 @@
 	};
 
 	const addLocation = async () => {
-		const { data, error } = await rq.apiEndPoints().POST('/api/v1/weather/location');
+		const { data, error } = await rq.apiEndPoints().POST('/api/v1/admin/location');
 
 		if (data) {
 			if (data.resultCode === '200-0') {

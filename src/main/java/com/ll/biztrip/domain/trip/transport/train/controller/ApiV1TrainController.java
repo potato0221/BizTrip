@@ -26,36 +26,6 @@ public class ApiV1TrainController {
     private final TrainService trainService;
     private final Rq rq;
 
-    @PostMapping("/addCity")
-    @Operation(summary = "기차 도시 등록")
-    @PreAuthorize("hasRole('ADMIN')")
-    public RsData<Empty> addCities() {
-
-        trainService.updateKtxCity();
-
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
-    }
-
-    @PostMapping("/addTrainType")
-    @Operation(summary = "기차 종류 등록")
-    @PreAuthorize("hasRole('ADMIN')")
-    public RsData<Empty> addTrainType() {
-
-        trainService.updateTrainType();
-
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
-    }
-
-    @PostMapping("/addStation")
-    @Operation(summary = "기차역 등록")
-    @PreAuthorize("hasRole('ADMIN')")
-    public RsData<Empty> addStations() {
-
-        trainService.updateStation();
-
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
-    }
-
     @GetMapping("/trainType")
     @Operation(summary = "기차 종류 조회")
     @PreAuthorize("isAuthenticated()")

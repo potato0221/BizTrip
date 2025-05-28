@@ -29,16 +29,6 @@ public class ApiV1BusController {
     private final BusService busService;
     private final Rq rq;
 
-    @PostMapping("/addTerminal")
-    @Operation(summary = "버스 터미널 등록")
-    @PreAuthorize("hasRole('ADMIN')")
-    public RsData<Empty> addTerminal() {
-
-        busService.updateTerminal();
-
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
-    }
-
     @GetMapping("/terminalList")
     @Operation(summary = "터미널 리스트 조회")
     @PreAuthorize("isAuthenticated()")

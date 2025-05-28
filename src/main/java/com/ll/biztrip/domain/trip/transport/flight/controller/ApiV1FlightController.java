@@ -26,26 +26,6 @@ public class ApiV1FlightController {
     private final FlightService flightService;
     private final Rq rq;
 
-    @PostMapping("/addAirport")
-    @Operation(summary = "공항 등록")
-    @PreAuthorize("hasRole('ADMIN')")
-    public RsData<Empty> addAirports() {
-
-        flightService.updateAirport();
-
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
-    }
-
-    @PostMapping("/addAirline")
-    @Operation(summary = "항공사 등록")
-    @PreAuthorize("hasRole('ADMIN')")
-    public RsData<Empty> addAirlines() {
-
-        flightService.updateAirline();
-
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
-    }
-
     @GetMapping("/airline")
     @Operation(summary = "항공사 리스트 조회")
     @PreAuthorize("isAuthenticated()")
