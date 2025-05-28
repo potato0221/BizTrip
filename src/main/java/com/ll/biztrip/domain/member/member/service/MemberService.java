@@ -3,6 +3,7 @@ package com.ll.biztrip.domain.member.member.service;
 import com.ll.biztrip.domain.member.member.dto.NicknameDto;
 import com.ll.biztrip.domain.member.member.entity.Member;
 import com.ll.biztrip.domain.member.member.repository.MemberRepository;
+import com.ll.biztrip.global.enums.Msg;
 import com.ll.biztrip.global.exceptions.GlobalException;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
@@ -108,10 +109,10 @@ public class MemberService {
     @Transactional
     public RsData<AuthAndMakeTokensResponseBody> authAndMakeTokens(String username, String password) {
         Member member = findByUsername(username)
-                .orElseThrow(() -> new GlobalException("400-1", "해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new GlobalException(Msg.E400_5_NOT_FOUND_USER));
 
         if (!passwordMatches(member, password))
-            throw new GlobalException("400-2", "비밀번호가 일치하지 않습니다.");
+            throw new GlobalException(Msg.E400_6_INCORRECT_PASSWORD);
 
         String refreshToken = member.getRefreshToken();
         String accessToken = authTokenService.genAccessToken(member);
@@ -152,7 +153,7 @@ public class MemberService {
     }
 
     public RsData<String> refreshAccessToken(String refreshToken) {
-        Member member = memberRepository.findByRefreshToken(refreshToken).orElseThrow(() -> new GlobalException("400-1", "존재하지 않는 리프레시 토큰입니다."));
+        Member member = memberRepository.findByRefreshToken(refreshToken).orElseThrow(() -> new GlobalException(Msg.E400_7_NOT_FOUND_REFRESH_TOKEN));
 
         String accessToken = authTokenService.genAccessToken(member);
 

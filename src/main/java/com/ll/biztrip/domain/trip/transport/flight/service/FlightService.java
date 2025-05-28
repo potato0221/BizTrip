@@ -109,7 +109,7 @@ public class FlightService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GlobalException(Msg.E500_1_INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -195,7 +195,7 @@ public class FlightService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GlobalException(Msg.E500_1_INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -267,7 +267,7 @@ public class FlightService {
                 allSchedules.addAll(schedules);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GlobalException(Msg.E500_1_INTERNAL_SERVER_ERROR, e);
         }
 
         return allSchedules;
@@ -294,9 +294,7 @@ public class FlightService {
                 flightRegisterDto.getDepartureTime(), flightRegisterDto.getArrivalTime(),
                 flightRegisterDto.getFlightNumber(), flightRegisterDto.getAirline()
         )){
-            throw new GlobalException(
-                    Msg.E400_3_ALREADY_REGISTERED_FLIGHT.getCode(),
-                    Msg.E400_3_ALREADY_REGISTERED_FLIGHT.getMsg());
+            throw new GlobalException(Msg.E400_3_ALREADY_REGISTERED_FLIGHT);
         }
 
         Flight flight = Flight.builder()

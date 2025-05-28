@@ -108,7 +108,7 @@ public class BusService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GlobalException(Msg.E500_1_INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -183,7 +183,7 @@ public class BusService {
                 allSchedules.addAll(schedules);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GlobalException(Msg.E500_1_INTERNAL_SERVER_ERROR, e);
         }
 
         return allSchedules;
@@ -196,9 +196,7 @@ public class BusService {
                 member, busRegisterDto.getDepartureName(), busRegisterDto.getArrivalName(),
                 busRegisterDto.getDepartureTime(), busRegisterDto.getArrivalTime(), busRegisterDto.getBusGrade()
         )){
-            throw new GlobalException(
-                    Msg.E400_1_ALREADY_REGISTERED_BUS.getCode(),
-                    Msg.E400_1_ALREADY_REGISTERED_BUS.getMsg());
+            throw new GlobalException(Msg.E400_1_ALREADY_REGISTERED_BUS);
         }
 
         Bus bus = Bus.builder()

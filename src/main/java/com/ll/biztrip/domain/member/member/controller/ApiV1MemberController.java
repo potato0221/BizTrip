@@ -66,8 +66,8 @@ public class ApiV1MemberController {
     public RsData<Empty> logout() {
         rq.setLogout();
 
-        return RsData.of(Msg.E200_6_LOGOUT_SUCCEED.getCode(),
-                Msg.E200_6_LOGOUT_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_4_LOGOUT_SUCCEED.getCode(),
+                Msg.E200_4_LOGOUT_SUCCEED.getMsg());
     }
 
     @PutMapping("/modifyNickName")

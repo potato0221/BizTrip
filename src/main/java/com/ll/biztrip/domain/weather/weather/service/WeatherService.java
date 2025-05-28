@@ -11,6 +11,8 @@ import com.ll.biztrip.domain.weather.weather.entity.WeatherGridLocation;
 import com.ll.biztrip.domain.weather.weather.repository.LocationCodeMappingRepository;
 import com.ll.biztrip.domain.weather.weather.repository.WeatherGridLocationRepository;
 import com.ll.biztrip.global.app.AppConfig;
+import com.ll.biztrip.global.enums.Msg;
+import com.ll.biztrip.global.exceptions.GlobalException;
 import com.ll.biztrip.standard.util.AddressParser;
 import com.ll.biztrip.standard.util.WeatherCodeTranslator;
 import com.ll.biztrip.standard.util.WeatherTimeUtil;
@@ -46,7 +48,7 @@ public class WeatherService {
     public void loadFromCsv() {
 
         if (weatherGridLocationRepository.count() > 0) {
-            throw new IllegalStateException("이미 데이터가 존재합니다.");
+            throw new GlobalException(Msg.E400_0_ALREADY_REGISTERED_DATA);
         }
 
         String csvFilePath = AppConfig.getCsvFilePath();
@@ -76,7 +78,7 @@ public class WeatherService {
             System.out.println("총 저장된 건수: " + batch.size());
 
         } catch (IOException | CsvException e) {
-            throw new RuntimeException("CSV 읽기 실패", e);
+            throw new GlobalException(Msg.E500_0_CSV_READ_FAIL, e);
         }
     }
 
@@ -140,7 +142,7 @@ public class WeatherService {
             weatherDtos.addAll(schedules);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GlobalException(Msg.E500_1_INTERNAL_SERVER_ERROR, e);
         }
 
         return weatherDtos;
