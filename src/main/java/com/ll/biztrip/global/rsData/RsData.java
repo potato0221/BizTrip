@@ -1,5 +1,6 @@
 package com.ll.biztrip.global.rsData;
 
+import com.ll.biztrip.global.enums.Msg;
 import com.ll.biztrip.standard.base.Empty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,6 +36,14 @@ public class RsData<T> {
         RsData<T> tRsData = new RsData<>(resultCode, statusCode, msg, data);
 
         return tRsData;
+    }
+
+    public static <T> RsData<T> of(Msg msg) {
+        return of(msg.getCode(), msg.getMsg(), (T) new Empty());
+    }
+
+    public static <T> RsData<T> of(Msg msg, T data) {
+        return of(msg.getCode(), msg.getMsg(), data);
     }
 
     @NonNull

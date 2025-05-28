@@ -22,9 +22,9 @@
 
 	async function loadLists() {
 		const [bus, train, flight] = await Promise.all([
-			rq.apiEndPoints().GET('/api/v1/travel/bus/myList'),
-			rq.apiEndPoints().GET('/api/v1/travel/train/myList'),
-			rq.apiEndPoints().GET('/api/v1/travel/flight/myList')
+			rq.apiEndPoints().GET('/api/v1/transport/bus/myList'),
+			rq.apiEndPoints().GET('/api/v1/transport/train/myList'),
+			rq.apiEndPoints().GET('/api/v1/transport/flight/myList')
 		]);
 
 		busList = bus.data?.data ?? [];

@@ -1,6 +1,8 @@
 package com.ll.biztrip.standard.util;
 
 import com.ll.biztrip.global.app.AppConfig;
+import com.ll.biztrip.global.enums.Msg;
+import com.ll.biztrip.global.exceptions.GlobalException;
 import lombok.SneakyThrows;
 
 public class Ut {
@@ -37,7 +39,7 @@ public class Ut {
                 Process process = processBuilder.start();
                 process.waitFor();
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new GlobalException(Msg.E500_1_INTERNAL_SERVER_ERROR, e);
             }
         }
     }

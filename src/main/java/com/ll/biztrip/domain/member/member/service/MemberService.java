@@ -3,6 +3,7 @@ package com.ll.biztrip.domain.member.member.service;
 import com.ll.biztrip.domain.member.member.dto.NicknameDto;
 import com.ll.biztrip.domain.member.member.entity.Member;
 import com.ll.biztrip.domain.member.member.repository.MemberRepository;
+import com.ll.biztrip.global.enums.Msg;
 import com.ll.biztrip.global.exceptions.GlobalException;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
@@ -35,7 +36,7 @@ public class MemberService {
     @Transactional
     public RsData<Member> join(String username, String password, String nickname, String profileImgUrl) {
         if (findByUsername(username).isPresent()) {
-            return RsData.of("400-2", "이미 존재하는 회원입니다.");
+            return RsData.of(Msg.E400_5_ALREADY_REGISTERED_MEMBER);
         }
 
         Member member = Member.builder()
@@ -47,7 +48,7 @@ public class MemberService {
                 .build();
         memberRepository.save(member);
 
-        return RsData.of("200", "%s님 환영합니다. 회원가입이 완료되었습니다. 로그인 후 이용해주세요.".formatted(member.getUsername()), member);
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED, member);
     }
 
     @Transactional
@@ -67,7 +68,7 @@ public class MemberService {
     public RsData<Member> modify(Member member, String profileImgUrl) {
         member.setProfileImgUrl(profileImgUrl);
 
-        return RsData.of("200-2","회원정보가 수정되었습니다.".formatted(member.getUsername()), member);
+        return RsData.of(Msg.E200_2_MODIFY_SUCCEED, member);
     }
 
 
@@ -82,7 +83,7 @@ public class MemberService {
     public RsData<Member> whenSocialLogin(String providerTypeCode, String username, String nickname, String profileImgUrl) {
         Optional<Member> opMember = findByUsername(username);
 
-        if (opMember.isPresent()) return RsData.of("200", "이미 존재합니다.", opMember.get());
+        if (opMember.isPresent()) return RsData.of(Msg.E400_5_ALREADY_REGISTERED_MEMBER, opMember.get());
 
         return join(username, "");
     }
@@ -108,17 +109,15 @@ public class MemberService {
     @Transactional
     public RsData<AuthAndMakeTokensResponseBody> authAndMakeTokens(String username, String password) {
         Member member = findByUsername(username)
-                .orElseThrow(() -> new GlobalException("400-1", "해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new GlobalException(Msg.E400_7_NOT_FOUND_USER));
 
         if (!passwordMatches(member, password))
-            throw new GlobalException("400-2", "비밀번호가 일치하지 않습니다.");
+            throw new GlobalException(Msg.E400_6_INCORRECT_PASSWORD);
 
         String refreshToken = member.getRefreshToken();
         String accessToken = authTokenService.genAccessToken(member);
 
-        return RsData.of(
-                "200-1",
-                "로그인 성공",
+        return RsData.of(Msg.E200_5_LOGIN_SUCCEED,
                 new AuthAndMakeTokensResponseBody(member, accessToken, refreshToken)
         );
     }
@@ -152,10 +151,10 @@ public class MemberService {
     }
 
     public RsData<String> refreshAccessToken(String refreshToken) {
-        Member member = memberRepository.findByRefreshToken(refreshToken).orElseThrow(() -> new GlobalException("400-1", "존재하지 않는 리프레시 토큰입니다."));
+        Member member = memberRepository.findByRefreshToken(refreshToken).orElseThrow(() -> new GlobalException(Msg.E400_8_NOT_FOUND_REFRESH_TOKEN));
 
         String accessToken = authTokenService.genAccessToken(member);
 
-        return RsData.of("200-1", "토큰 갱신 성공", accessToken);
+        return RsData.of(Msg.E200_6_TOKEN_REFRESH_SUCCEED, accessToken);
     }
 }

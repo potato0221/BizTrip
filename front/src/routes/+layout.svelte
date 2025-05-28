@@ -6,7 +6,7 @@
 
 	let isRoute = $state(false);
 	let isWeather = $state(false);
-	let isAddTravel = $state(false);
+	let isAddTransport = $state(false);
 	let isMyTravel = $state(false);
 
 	const { children } = $props();
@@ -16,7 +16,7 @@
 		});
 		isRoute = $page.url.pathname.includes('/route') ? true : false;
 		isWeather = $page.url.pathname.includes('/weather') ? true : false;
-		isAddTravel = $page.url.pathname.includes('/add-transport') ? true : false;
+		isAddTransport = $page.url.pathname.includes('/add-transport') ? true : false;
 		isMyTravel = $page.url.pathname.includes('/trip-manager') ? true : false;
 	});
 </script>
@@ -90,14 +90,14 @@
 				<a href="/add-transport">
 					<div class="flex items-center justify-center">
 						<div
-							class={isAddTravel
+							class={isAddTransport
 								? 'flex h-9 w-9 items-center justify-center text-xl text-blue-900'
 								: 'flex h-9 w-9 items-center justify-center text-xl text-gray-300'}
 						>
 							<i class="fa-solid fa-road text-2xl"></i>
 						</div>
 					</div>
-					<p class={isAddTravel ? 'text-blue-900' : 'text-gray-300'}>교통 추가</p>
+					<p class={isAddTransport ? 'text-blue-900' : 'text-gray-300'}>교통 추가</p>
 				</a>
 			{:else}
 				<a href="/member/login">

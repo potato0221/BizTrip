@@ -55,9 +55,7 @@ public class TripService {
     public TripPlan addLeg(Long tripPlanId, TripLegDto tripLegDto) {
 
         TripPlan tripPlan = tripPlanRepository.findById(tripPlanId)
-                .orElseThrow(()-> new GlobalException(
-                        Msg.E404_0_DATA_NOT_FOUND.getCode(),
-                        Msg.E404_0_DATA_NOT_FOUND.getMsg()));
+                .orElseThrow(()-> new GlobalException(Msg.E404_0_DATA_NOT_FOUND));
 
         boolean exists = tripPlan.getLegs().stream().anyMatch(leg ->
                 leg.getTransportType().name().equalsIgnoreCase(tripLegDto.getTransportType()) &&
@@ -65,9 +63,7 @@ public class TripService {
         );
 
         if(exists){
-            throw new GlobalException(
-                    Msg.E400_4_ALREADY_REGISTERED_LEG.getCode(),
-                    Msg.E400_4_ALREADY_REGISTERED_LEG.getMsg());
+            throw new GlobalException(Msg.E400_4_ALREADY_REGISTERED_LEG);
         }
 
         TripLeg tripLeg = TripLeg.builder()

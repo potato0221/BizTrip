@@ -9,12 +9,13 @@ import java.util.List;
 
 public interface BusRepository extends JpaRepository<Bus, Long> {
 
-    boolean existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTime(
+    boolean existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTimeAndBusGrade(
             Member member,
             String departureName,
             String arrivalName,
             LocalDateTime departureTime,
-            LocalDateTime arrivalTime
+            LocalDateTime arrivalTime,
+            String busGrade
     );
 
     List<Bus> findBusByMember(Member member);

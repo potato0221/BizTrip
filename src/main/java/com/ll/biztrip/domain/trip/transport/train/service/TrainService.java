@@ -111,7 +111,7 @@ public class TrainService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GlobalException(Msg.E500_1_INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -215,7 +215,7 @@ public class TrainService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GlobalException(Msg.E500_1_INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -303,7 +303,7 @@ public class TrainService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GlobalException(Msg.E500_1_INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -373,7 +373,7 @@ public class TrainService {
                 allSchedules.addAll(schedules);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GlobalException(Msg.E500_1_INTERNAL_SERVER_ERROR, e);
         }
 
         return allSchedules;
@@ -396,13 +396,12 @@ public class TrainService {
     @Transactional
     public void addTrainSchedule(TrainRegisterDto trainRegisterDto, Member member){
 
-        if(trainRepository.existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTime(
+        if(trainRepository.existsByMemberAndDepartureNameAndArrivalNameAndDepartureTimeAndArrivalTimeAndTrainType(
                 member, trainRegisterDto.getDepartureName(), trainRegisterDto.getArrivalName(),
-                trainRegisterDto.getDepartureTime(), trainRegisterDto.getArrivalTime()
+                trainRegisterDto.getDepartureTime(), trainRegisterDto.getArrivalTime(), trainRegisterDto.getTrainType()
         )){
             throw new GlobalException(
-                    Msg.E400_2_ALREADY_REGISTERED_TRAIN.getCode(),
-                    Msg.E400_2_ALREADY_REGISTERED_TRAIN.getMsg());
+                    Msg.E400_2_ALREADY_REGISTERED_TRAIN);
         }
 
         Train train = Train.builder()

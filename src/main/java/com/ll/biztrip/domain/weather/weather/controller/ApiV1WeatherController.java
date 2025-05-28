@@ -5,12 +5,14 @@ import com.ll.biztrip.domain.weather.weather.dto.WeatherInfoDto;
 import com.ll.biztrip.domain.weather.weather.dto.WeatherResponseDto;
 import com.ll.biztrip.domain.weather.weather.service.WeatherService;
 import com.ll.biztrip.global.enums.Msg;
-import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
-import com.ll.biztrip.standard.base.Empty;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -20,41 +22,29 @@ import java.util.List;
 public class ApiV1WeatherController {
 
     private final WeatherService weatherService;
-    private final Rq rq;
-
-    @PostMapping("/location")
-    @Operation(summary = "위치 정보 저장")
-    public RsData<Empty> addLocations(){
-
-        if(!rq.isAdmin()){
-            return RsData.of(Msg.E403_0_FORBIDDEN.getCode(),Msg.E403_0_FORBIDDEN.getMsg());
-        }
-
-        weatherService.loadFromCsv();
-
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
-    }
 
     @GetMapping("/trip")
     @Operation(summary = "trip 도착지 별 날씨 조회")
+    @PreAuthorize("isAuthenticated()")
     public RsData<WeatherResponseDto> getWeatherByTrip(
             @RequestParam Long tripPlanId
     ){
 
         WeatherResponseDto weatherResponseDto = weatherService.getFormattedForecast(tripPlanId);
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), weatherResponseDto);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, weatherResponseDto);
     }
 
     @GetMapping("/current")
     @Operation(summary = "현재 위치 날씨 조회")
+    @PreAuthorize("isAuthenticated()")
     public RsData<List<WeatherInfoDto>> getCurrentWeather(
             @RequestParam String address
     ){
 
         List<WeatherInfoDto> weatherInfoDtos = weatherService.getCurrentWeather(address);
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), weatherInfoDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, weatherInfoDtos);
     }
 
 }
