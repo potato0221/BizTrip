@@ -31,7 +31,7 @@ public class ApiV1AdminController {
 
         busService.updateTerminal();
 
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED);
     }
 
     @PostMapping("/addAirport")
@@ -40,7 +40,7 @@ public class ApiV1AdminController {
 
         flightService.updateAirport();
 
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED);
     }
 
     @PostMapping("/addAirline")
@@ -49,7 +49,7 @@ public class ApiV1AdminController {
 
         flightService.updateAirline();
 
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED);
     }
 
     @PostMapping("/addCity")
@@ -58,7 +58,7 @@ public class ApiV1AdminController {
 
         trainService.updateKtxCity();
 
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED);
     }
 
     @PostMapping("/addTrainType")
@@ -67,7 +67,7 @@ public class ApiV1AdminController {
 
         trainService.updateTrainType();
 
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED);
     }
 
     @PostMapping("/addStation")
@@ -76,7 +76,7 @@ public class ApiV1AdminController {
 
         trainService.updateStation();
 
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED);
     }
 
     @PostMapping("/location")
@@ -85,6 +85,6 @@ public class ApiV1AdminController {
 
         weatherService.loadFromCsv();
 
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED);
     }
 }

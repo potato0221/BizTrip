@@ -32,7 +32,7 @@ public class ApiV1WeatherController {
 
         WeatherResponseDto weatherResponseDto = weatherService.getFormattedForecast(tripPlanId);
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), weatherResponseDto);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, weatherResponseDto);
     }
 
     @GetMapping("/current")
@@ -44,7 +44,7 @@ public class ApiV1WeatherController {
 
         List<WeatherInfoDto> weatherInfoDtos = weatherService.getCurrentWeather(address);
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), weatherInfoDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, weatherInfoDtos);
     }
 
 }

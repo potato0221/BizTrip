@@ -33,7 +33,7 @@ public class ApiV1FlightController {
 
         List<AirlineDto> requestDtos = flightService.getAirlines();
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), requestDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, requestDtos);
     }
 
     @GetMapping("/airport")
@@ -43,7 +43,7 @@ public class ApiV1FlightController {
 
         List<AirportDto> requestDtos = flightService.getAirports();
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), requestDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, requestDtos);
     }
 
     @GetMapping("/schedule")
@@ -59,7 +59,7 @@ public class ApiV1FlightController {
 
         List<FlightScheduleDto> scheduleDtos = flightService.getFlightSchedule(departureAirportId, arrivalAirportId, parsedDate, airlineId);
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), scheduleDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, scheduleDtos);
     }
 
     @PostMapping("/register")
@@ -73,7 +73,7 @@ public class ApiV1FlightController {
 
         flightService.addFlightSchedule(flightRegisterDto, member);
 
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED);
     }
 
     @GetMapping("/myList")
@@ -83,7 +83,7 @@ public class ApiV1FlightController {
 
         List<FlightDto> flightDtos = flightService.getMyFlights(rq.getMember());
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), flightDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, flightDtos);
     }
 
 }

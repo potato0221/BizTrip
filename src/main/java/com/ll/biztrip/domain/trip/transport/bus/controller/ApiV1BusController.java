@@ -36,9 +36,7 @@ public class ApiV1BusController {
 
         List<TerminalDto> terminalDtos = busService.getTerminals();
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(),
-                Msg.E200_1_INQUIRY_SUCCEED.getMsg(),
-                terminalDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, terminalDtos);
 
     }
 
@@ -54,7 +52,7 @@ public class ApiV1BusController {
 
         List<BusScheduleDto> scheduleDtos = busService.getBusSchedule(departureTerminalId, arrivalTerminalId, parsedDate);
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), scheduleDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, scheduleDtos);
     }
 
     @PostMapping("/register")
@@ -68,7 +66,7 @@ public class ApiV1BusController {
 
         busService.addBusSchedule(busRegisterDto, member);
 
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED);
     }
 
     @GetMapping("/myList")
@@ -78,6 +76,6 @@ public class ApiV1BusController {
 
         List<BusDto> busDtos = busService.getMyBuses(rq.getMember());
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), busDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, busDtos);
     }
 }

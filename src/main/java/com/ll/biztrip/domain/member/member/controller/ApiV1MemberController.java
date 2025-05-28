@@ -5,7 +5,6 @@ import com.ll.biztrip.domain.member.member.dto.NicknameDto;
 import com.ll.biztrip.domain.member.member.entity.Member;
 import com.ll.biztrip.domain.member.member.service.MemberService;
 import com.ll.biztrip.global.enums.Msg;
-import com.ll.biztrip.global.exceptions.GlobalException;
 import com.ll.biztrip.global.rq.Rq;
 import com.ll.biztrip.global.rsData.RsData;
 import com.ll.biztrip.standard.base.Empty;
@@ -14,6 +13,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,13 +35,11 @@ public class ApiV1MemberController {
 
     @GetMapping("/me")
     @Operation(summary = "멤버 조회")
+    @PreAuthorize("isAuthenticated()")
     public RsData<MeResponseBody> getMe() {
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(),
-                Msg.E200_1_INQUIRY_SUCCEED.getMsg(),
-                new MeResponseBody(
-                        new MemberDto(rq.getMember())
-                )
-        );
+
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED,
+                new MeResponseBody(new MemberDto(rq.getMember())));
     }
 
     @PostMapping(value = "/login")
@@ -66,24 +64,18 @@ public class ApiV1MemberController {
     public RsData<Empty> logout() {
         rq.setLogout();
 
-        return RsData.of(Msg.E200_4_LOGOUT_SUCCEED.getCode(),
-                Msg.E200_4_LOGOUT_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_4_LOGOUT_SUCCEED);
     }
 
     @PutMapping("/modifyNickName")
     @Operation(summary = "닉네임 변경")
+    @PreAuthorize("isAuthenticated()")
     public RsData<NicknameDto> modifyNickName(@RequestBody NicknameDto nicknameDto){
-
-        if(rq.getMember()==null){
-            throw new GlobalException(Msg.E401_0_UNAUTHORIZED.getCode(), Msg.E401_0_UNAUTHORIZED.getMsg());
-        }
 
         Member member = memberService.modifyNickname(nicknameDto);
 
         NicknameDto modifyNickNameDto = new NicknameDto(member.getNickname());
 
-        return RsData.of(Msg.E200_2_MODIFY_SUCCEED.getCode(),
-                Msg.E200_2_MODIFY_SUCCEED.getMsg(),
-                modifyNickNameDto);
+        return RsData.of(Msg.E200_2_MODIFY_SUCCEED, modifyNickNameDto);
     }
 }

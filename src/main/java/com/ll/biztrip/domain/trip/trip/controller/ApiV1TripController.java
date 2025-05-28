@@ -36,7 +36,7 @@ public class ApiV1TripController {
 
         tripService.addTripPlan(tripPlanDto, member);
 
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED);
 
     }
 
@@ -49,8 +49,7 @@ public class ApiV1TripController {
 
         TripPlan updatedPlan = tripService.addLeg(tripPlanId, tripLegDto);
 
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg(),
-                new TripPlanDto(updatedPlan));
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED, new TripPlanDto(updatedPlan));
     }
 
     @GetMapping("/planList")
@@ -60,7 +59,7 @@ public class ApiV1TripController {
 
         List<PlanListDto> planList = tripService.getPlanList(rq.getMember());
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), planList);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, planList);
     }
 
     @GetMapping("/getPlan")
@@ -70,7 +69,7 @@ public class ApiV1TripController {
 
         List<TripPlanDto> planDtos = tripService.getPlanDetail(rq.getMember());
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), planDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, planDtos);
     }
 
     @DeleteMapping("/delete/plan/{planId}")
@@ -82,7 +81,7 @@ public class ApiV1TripController {
 
         tripService.deletePlan(planId, rq.getMember());
 
-        return RsData.of(Msg.E200_3_DELETE_SUCCEED.getCode(), Msg.E200_3_DELETE_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_3_DELETE_SUCCEED);
 
     }
 
@@ -95,7 +94,7 @@ public class ApiV1TripController {
 
         tripService.deleteLeg(legId, rq.getMember());
 
-        return RsData.of(Msg.E200_3_DELETE_SUCCEED.getCode(), Msg.E200_3_DELETE_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_3_DELETE_SUCCEED);
     }
 
     @GetMapping("/today")
@@ -105,6 +104,6 @@ public class ApiV1TripController {
 
         List<TripPlanDto> tripPlanDtos = tripService.getTodayPlan();
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), tripPlanDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, tripPlanDtos);
     }
 }

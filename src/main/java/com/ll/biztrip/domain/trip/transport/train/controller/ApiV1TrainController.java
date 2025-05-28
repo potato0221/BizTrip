@@ -33,7 +33,7 @@ public class ApiV1TrainController {
 
         List<TrainTypeDto> requestDtos = trainService.getTrainTypes();
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), requestDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, requestDtos);
     }
 
     @GetMapping("/stationList")
@@ -43,7 +43,7 @@ public class ApiV1TrainController {
 
         List<StationDto> requestDtos = trainService.getStations();
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), requestDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, requestDtos);
     }
 
     @GetMapping("/schedule")
@@ -59,7 +59,7 @@ public class ApiV1TrainController {
 
         List<TrainScheduleDto> scheduleDtos = trainService.getTrainSchedule(departureStationId, arrivalStationId, parsedDate, trainType);
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), scheduleDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, scheduleDtos);
     }
 
     @PostMapping("/register")
@@ -73,7 +73,7 @@ public class ApiV1TrainController {
 
         trainService.addTrainSchedule(trainRegisterDto, member);
 
-        return RsData.of(Msg.E200_0_CREATE_SUCCEED.getCode(), Msg.E200_0_CREATE_SUCCEED.getMsg());
+        return RsData.of(Msg.E200_0_CREATE_SUCCEED);
     }
 
     @GetMapping("/myList")
@@ -83,6 +83,6 @@ public class ApiV1TrainController {
 
         List<TrainDto> trainDtos = trainService.getMyTrains(rq.getMember());
 
-        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED.getCode(), Msg.E200_1_INQUIRY_SUCCEED.getMsg(), trainDtos);
+        return RsData.of(Msg.E200_1_INQUIRY_SUCCEED, trainDtos);
     }
 }
